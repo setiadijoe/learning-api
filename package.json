@@ -1,0 +1,11 @@
+{
+  "name": "taralite-faspay",
+  "version": "1.0.0",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^5.0.0",
+    "glue": "^5.0.0",
+    "hapi": "^17.2.0"
+  }
+}
