@@ -6,14 +6,14 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: (request, h) => 'hapi works',
+        handler: (request, h) => 'It works buddy',
         description: 'Root API',
         notes: 'return server status'
       }
     },
     {
       method: 'GET',
-      path: '/{VA}/{signature}'
+      path: '/{VA}/{signature}',
       config: {
         handler: redirector,
         description: 'VA redirector',

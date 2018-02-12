@@ -1,5 +1,8 @@
-const md5 = require('md5')
-const sha1 = require('sha1')
+const crypto = require('crypto')
+
+const hashSignature = (string, hashType) => {
+  return crypto.createHash(hashType).update(string).digest('hex')
+}
 
 const redirector = (request, h) => {
   // cek VA nya
@@ -7,8 +10,8 @@ const redirector = (request, h) => {
     
   }
   
-  const signature = sha1(md5(`${user_id}.${password}.${req.params.va}`))
-  
+  const signature = hashSignature(hashSignature(`${user_id}.${password}.${req.params.va }`, 'md5'), 'sha1')
+
   // cek signature nya
   if (req.params.signature === signature) {
     
