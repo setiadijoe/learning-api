@@ -1,4 +1,4 @@
-const redirector = require('./redirector')
+const redirector = require('./handlers/redirector')
 
 const routes = {
   register: (server, options) => {
