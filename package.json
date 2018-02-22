@@ -4,21 +4,30 @@
   "main": "app.js",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.17.1",
+    "code": "^5.2.0",
     "dotenv": "^5.0.0",
+    "faker": "^4.1.0",
     "glue": "^5.0.0",
     "hapi": "^17.2.0",
     "hapi-swagger": "^9.0.2",
+    "joi": "^13.1.2",
+    "lab": "^15.2.2",
     "pg": "^7.4.1",
     "sequelize": "^4.33.3",
     "sequelize-cli": "^3.2.0"
   },
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "migrate": "./node_modules/.bin/sequelize db:migrate",
+    "seed": "./node_modules/.bin/sequelize db:seed:all",
+    "sequelize": "./node_modules/.bin/sequelize"
   },
   "devDependencies": {
     "blipp": "^3.0.0",
     "inert": "^5.1.0",
+    "lab": "^15.2.2",
     "vision": "^5.3.1"
   }
 }
