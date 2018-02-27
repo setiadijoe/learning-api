@@ -2,28 +2,16 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    /*
-      Add altering commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.bulkInsert('Person', [{
-        name: 'John Doe',
-        isBetaMember: false
-      }], {});
-    */
     return queryInterface.bulkInsert('VirtualAccounts', [{
       account_id: 101010101,
-      loan_id: 10000001,
-      lender_account_id: null,
+      source: 'LenderAccount',
       first_name: 'Helio',
       last_name: 'Orowaro',
       bank_code: 'BCA',
       virtual_account_id: '7100002937461587989'
     },{
       account_id: 101010102,
-      loan_id: null,
-      lender_account_id: 10000001,
+      source: 'LoanAccount',
       first_name: 'Alam',
       last_name: 'Bahnasa',
       bank_code: 'BCA',
