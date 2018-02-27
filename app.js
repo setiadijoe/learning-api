@@ -10,7 +10,8 @@ const startServer = async () => {
 
     await server.start()
     console.log(`Server running at: ${server.info.uri}`)
-  } catch (err) {
+  } 
+  catch (err) {
     console.log(err)
     process.exit(1)
   }
