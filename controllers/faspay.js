@@ -2,8 +2,9 @@ const fetchLoanDetails = require('../services/getLoanDetail')
 const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const { virtualAccountDetail } = require('./../services/virtualAccount')
+const { insertPayment } = require('./../services/payment')
 
-module.exports.inquiry = (reques, h) => {
+module.exports.inquiry = (request, h) => {
   const response = {
     response: 'VA Static Response',
     va_number: null,
@@ -32,5 +33,40 @@ module.exports.inquiry = (reques, h) => {
   })
   .catch(err => {
     return response
+  })
+}
+
+module.exports.payment = (request, h) => {
+  return fetchUserDetail(request.params.virtualAccount)
+  .then(user => {
+    let recordPayment = {
+      virtual_account: user.virtual_account_id,
+      transaction_id: request.query.trx_uid,
+      amount: request.query.amount,
+      status: 'pending'
+    }
+    return insertPayment(recordPayment)
+    .then(recorded => {
+      return {
+        faspay: {
+          response: 'VA Static Response',
+          va_number: recorded.virtual_account,
+          amount: recorded.amount,
+          cust_name: `${user.first_name} ${user.last_name}`,
+          response_code: FASPAY_RESPONSE_CODE.SUCCEED
+        }
+      }
+    })
+  })
+  .catch(err => {
+    return {
+      faspay: {
+        response: 'VA Static Response',
+        va_number: null,
+        amount: null,
+        cust_name: null,
+        response_code: FASPAY_RESPONSE_CODE.FAILED
+      }
+    }
   })
 }
