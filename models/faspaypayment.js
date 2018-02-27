@@ -4,8 +4,7 @@ module.exports = function(sequelize, DataTypes) {
     virtual_account: DataTypes.STRING,
     transaction_id: DataTypes.STRING,
     amount: DataTypes.DECIMAL,
-    status_code: DataTypes.INTEGER,
-    status_desc: DataTypes.STRING
+    status: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {

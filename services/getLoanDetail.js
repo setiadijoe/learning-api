@@ -6,12 +6,12 @@ const db = axios.create({
 
 const fetchLoanDetails = () => {
   return db.get('/loanDetails')
-  .then(({ data }) => {
-    return data
-  })
-  .catch(err => {
-    return err
-  })
+    .then(({ data }) => {
+      return data
+    })
+    .catch(err => {
+      return err
+    })
 }
 
-module.exports = fetchLoanDetails;
+module.exports = fetchLoanDetails

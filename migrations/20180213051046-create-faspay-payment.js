@@ -17,10 +17,7 @@ module.exports = {
       amount: {
         type: Sequelize.DECIMAL
       },
-      status_code: {
-        type: Sequelize.INTEGER
-      },
-      status_desc: {
+      status: {
         type: Sequelize.STRING
       },
       createdAt: {
