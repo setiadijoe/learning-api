@@ -1,5 +1,5 @@
 const { FASPAY_RESPONSE_CODE } = require('../../helpers/constant')
-const inquiry = require('./inquiry');
+const { inquiry } = require('./../../controllers/faspay')
 
 const redirector = (request, h) => {
   if ( request.query.type === 'inquiry') {

@@ -15,11 +15,11 @@ const routes = {
     },
     {
       method: 'GET',
-      path: '/{VA}/{signature}',
+      path: '/{virtualAccount}/{signature}',
       config: {
         validate: {
           params: {
-            VA: Joi.string().alphanum(),
+            virtualAccount: Joi.string().alphanum(),
             signature: Joi.string().token()
           },
           query: {
