@@ -1,6 +1,11 @@
 'use strict';
+
+const { createAuditTriggerQuery } = require('./../utils/migration')
+
 module.exports = {
   up: function(queryInterface, Sequelize) {
+    const tableName = 'FaspayPayments'
+
     return queryInterface.createTable('FaspayPayments', {
       id: {
         allowNull: false,
@@ -30,7 +35,7 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: new Date()
       }
-    });
+    }).then(() => queryInterface.sequelize.query(createAuditTriggerQuery(tableName)));
   },
   down: function(queryInterface, Sequelize) {
     return queryInterface.dropTable('FaspayPayments');
