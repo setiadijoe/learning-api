@@ -1,4 +1,4 @@
-const DbConfig = require('../config/config')
+const DbConfig = require('../config/adminServiceConnect')
 const ServerConfig = require('../config/server')
 const { Client } = require('pg')
 const client = new Client(DbConfig[ServerConfig.env])
