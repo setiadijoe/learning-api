@@ -6,7 +6,7 @@ module.exports = {
     password: process.env.DB_DEV_PASS || 'postgres',
     database: process.env.DB_DEV || 'faspay-payment',
     host: process.env.DB_DEV_HOST || 'localhost',
-    port: process.env.DB_DEV_PORT,
+    port: process.env.DB_DEV_PORT || 5432,
     dialect: process.env.DB_DEV_DIALECT || 'postgres',
     logging: console.log
   },
