@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const redirector = require('./handlers/redirector')
 const virtualAccount = require('./handlers/virtualAccount')
+const postPayment = require('./handlers/postPayment')
 
 const routes = {
   register: (server, options) => {
@@ -24,7 +25,7 @@ const routes = {
           },
           query: {
             type: Joi.string().valid('inquiry', 'payment'),
-            trx_uid: Joi.string().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() }),
+            trx_id: Joi.string().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() }),
             amount: Joi.number().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() })
           }
         },
@@ -40,7 +41,23 @@ const routes = {
       method: 'POST',
       path: '/faspay/generate',
       config: virtualAccount.generateVa
+    },
+    {
+      method: 'POST',
+      path: '/api',
+      config: postPayment.pushPaymentNotif
     }
+    /**
+     * Output Response
+     * Response : {
+     *  trx_id: 789092834729348,
+     *  merchant_id: 11012,
+     *  bill_no: 904752475,
+     *  response_code: '00',
+     *  response_desc: 'Success',
+     *  response_date: 2017-08-08, 11:11:45
+     * }
+     */
   ])
   },
   name: 'routes-plugin'

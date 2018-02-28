@@ -3,8 +3,11 @@ module.exports = function(sequelize, DataTypes) {
   var FaspayPayment = sequelize.define('FaspayPayment', {
     virtual_account: DataTypes.STRING,
     transaction_id: DataTypes.STRING,
+    merchant_id: DataTypes.STRING,
+    bill_no: DataTypes.STRING,
     amount: DataTypes.DECIMAL,
-    status: DataTypes.STRING
+    status_code: DataTypes.STRING,
+    status_desc: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {

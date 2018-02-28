@@ -19,10 +19,19 @@ module.exports = {
       transaction_id: {
         type: Sequelize.STRING
       },
+      merchant_id: {
+        type: Sequelize.STRING
+      },
+      bill_no: {
+        type: Sequelize.STRING
+      },
       amount: {
         type: Sequelize.DECIMAL
       },
-      status: {
+      status_code: {
+        type: Sequelize.STRING
+      },
+      status_desc: {
         type: Sequelize.STRING
       },
       createdAt: {

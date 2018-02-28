@@ -8,3 +8,12 @@ module.exports.insertPayment = data => {
     status: data.status
   })
 }
+
+module.exports.updatePayment = (trx_id, updateObject) => {
+  return Model.FaspayPayment.update(updateObject, {
+    where: {
+      transaction_id: trx_id
+    },
+    returning: true
+  })
+}
