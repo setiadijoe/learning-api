@@ -2,6 +2,7 @@ const Joi = require('joi')
 const redirector = require('./handlers/redirector')
 const virtualAccount = require('./handlers/virtualAccount')
 const postPayment = require('./handlers/postPayment')
+const axios = require('axios')
 
 const routes = {
   register: (server, options) => {
@@ -9,7 +10,10 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: (request, h) => 'It works buddy',
+        handler: async (request, h) => {
+          const res = await axios.get('https://google.com')
+          return res.status
+        },
         description: 'Root API',
         notes: 'return server status'
       }
@@ -47,17 +51,6 @@ const routes = {
       path: '/api',
       config: postPayment.pushPaymentNotif
     }
-    /**
-     * Output Response
-     * Response : {
-     *  trx_id: 789092834729348,
-     *  merchant_id: 11012,
-     *  bill_no: 904752475,
-     *  response_code: '00',
-     *  response_desc: 'Success',
-     *  response_date: 2017-08-08, 11:11:45
-     * }
-     */
   ])
   },
   name: 'routes-plugin'

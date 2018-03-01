@@ -1,6 +1,8 @@
+require('dotenv').config()
+
 const bankPrefix = {
-  'permata': process.env.permataPrefix || '555555',
-  'bca': process.env.bcaPrefix || '666666'
+  'permata': process.env.PREFIX_PERMATA || '555555',
+  'bca': process.env.PREFIX_BCA || '666666'
 }
 
 const identifier = {

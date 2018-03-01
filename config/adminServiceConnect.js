@@ -2,9 +2,9 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    username: process.env.DB_ADMINSER_USER || 'postgres',
+    user: process.env.DB_ADMINSER_USER || 'postgres',
     password: process.env.DB_ADMINSER_PASS || 'postgres',
-    database: process.env.DB_ADMINSER || 'admin-migration-2911',
+    database: process.env.DB_ADMINSER || 'admin-service',
     host: process.env.DB_ADMINSER_HOST || 'localhost',
     port: process.env.DB_ADMINSER_PORT || 5432,
     dialect: process.env.DB_ADMINSER_DIALECT || 'postgres',
