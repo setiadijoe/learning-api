@@ -2,10 +2,10 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    username: process.env.DB_ADMINSER_USER || 'taralite',
-    password: process.env.DB_ADMINSER_PASS || 'taralite2015',
+    username: process.env.DB_ADMINSER_USER || 'postgres',
+    password: process.env.DB_ADMINSER_PASS || 'postgres',
     database: process.env.DB_ADMINSER || 'admin-migration-2911',
-    host: process.env.DB_ADMINSER_HOST || 'taralite-prod-280517-replica1.cuifbhul64nx.ap-southeast-1.rds.amazonaws.com',
+    host: process.env.DB_ADMINSER_HOST || 'localhost',
     port: process.env.DB_ADMINSER_PORT || 5432,
     dialect: process.env.DB_ADMINSER_DIALECT || 'postgres',
     logging: console.log
