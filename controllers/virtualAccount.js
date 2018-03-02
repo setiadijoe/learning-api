@@ -14,7 +14,6 @@ module.exports.generateVa = (request, h) => {
 
   return services.create(virtualAccounts)
     .catch((err) => {
-      console.log(err)
       return Boom.badData(new Error(err))
     })
 }

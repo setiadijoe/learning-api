@@ -69,7 +69,7 @@ module.exports.payment = async (request, h) => {
   }
 }
 
-module.exports.paymentNotif = (request, h) => {
+module.exports.paymentNotif = async (request, h) => {
   const { request_type, trx_id, merchant_id, bill_no, amount, payment_status_code, payment_status_desc, signature } = request.payload
   const updateObject = {
     merchant_id,
@@ -80,24 +80,20 @@ module.exports.paymentNotif = (request, h) => {
   }
 
   if (checkSignature(signature, `${bill_no}.${payment_status_code}`)) {
-    return updatePayment(trx_id, updateObject)
-      .then((updateResponse) => {
-        if (!updateResponse[0]) {
-          return Boom.badData('NO FIELDS UPDATED')
-        }
-        return {
-          response: request_type,
-          trx_id: updateResponse[1][0].transaction_id,
-          merchant_id: updateResponse[1][0].merchant_id,
-          bill_no: updateResponse[1][0].bill_no,
-          response_code: updateResponse[1][0].status_code,
-          response_desc: updateResponse[1][0].status_desc,
-          response_date: updateResponse[1][0].updatedAt
-        }
-      })
-      .catch(err => {
-        return Boom.badData(new Error(err))
-      })
+    const updateResponse = await updatePayment(trx_id, updateObject)
+    if (!updateResponse[0]) {
+      return Boom.badData('NO FIELDS UPDATED')
+    } else {
+      return {
+        response: request_type,
+        trx_id: updateResponse[1][0].transaction_id,
+        merchant_id: updateResponse[1][0].merchant_id,
+        bill_no: updateResponse[1][0].bill_no,
+        response_code: updateResponse[1][0].status_code,
+        response_desc: updateResponse[1][0].status_desc,
+        response_date: updateResponse[1][0].updatedAt
+      }
+    }
   } else {
     return Boom.badRequest('YOUR SIGNATURE IS INVALID')
   }

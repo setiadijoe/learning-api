@@ -2,7 +2,6 @@ const Joi = require('joi')
 const redirector = require('./handlers/redirector')
 const virtualAccount = require('./handlers/virtualAccount')
 const postPayment = require('./handlers/postPayment')
-const axios = require('axios')
 
 const routes = {
   register: (server, options) => {
@@ -10,10 +9,7 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: async (request, h) => {
-          const res = await axios.get('https://google.com')
-          return res.status
-        },
+        handler: async (request, h) => `It's work buddy`,
         description: 'Root API',
         notes: 'return server status'
       }
