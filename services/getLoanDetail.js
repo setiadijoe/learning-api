@@ -1,17 +1,12 @@
-const axios = require('axios')
+const db = require('../db/connection')
+const { fetchAccountById } = require('../queries/loan')
 
-const db = axios.create({
-  baseURL: 'http://localhost:3000'
-})
-
-const fetchLoanDetails = () => {
-  return db.get('/loanDetails')
-    .then(({ data }) => {
-      return data
-    })
-    .catch(err => {
-      return err
-    })
+module.exports.fetchAccountId = (accountId) => {
+  return db.query(fetchAccountById(accountId))
+  .then(fetchData => {
+    return  fetchData.rows[0].loan_id
+  })
+  .catch(err =>{
+    return err
+  })
 }
-
-module.exports = fetchLoanDetails

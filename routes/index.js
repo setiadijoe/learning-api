@@ -9,7 +9,7 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: (request, h) => 'It works buddy',
+        handler: async (request, h) => `It's work buddy`,
         description: 'Root API',
         notes: 'return server status'
       }
@@ -47,17 +47,6 @@ const routes = {
       path: '/api',
       config: postPayment.pushPaymentNotif
     }
-    /**
-     * Output Response
-     * Response : {
-     *  trx_id: 789092834729348,
-     *  merchant_id: 11012,
-     *  bill_no: 904752475,
-     *  response_code: '00',
-     *  response_desc: 'Success',
-     *  response_date: 2017-08-08, 11:11:45
-     * }
-     */
   ])
   },
   name: 'routes-plugin'
