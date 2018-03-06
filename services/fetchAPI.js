@@ -13,10 +13,9 @@ async function requestToken() {
 }
 
 async function requestAmount(loanId, token) {
-  let today = new Date()
   return axios({
     method: 'get',
-    url: `${process.env.URL}/loan/${loanId}/repayment/outstandingAmount?date=${today}`,
+    url: `${process.env.URL}/loan/${loanId}/repayment/nextRepaymentAmount`,
     headers: {
       'Authorization': `Bearer ${token}`
     }
