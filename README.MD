@@ -1,4 +1,9 @@
+![TaraliteLogo](https://e27.co/img/startups/8222/logo-1447040977.png)
+
+#STEP DEPLOY IN GOOGLE CLOUD PLATFORM
+
 ## CREATE VIRTUAL MACHINE IN GOOGLE CLOUD PLATFORM
+
 1 Click *Compute Engine* then click *VM Instances*
 2 Click *Create Instances*
 3 Then you should give __name__ of __instance__, choose __zone__  (_choose zone asia-shouteast1-a_), choose __machine type__, (_choose micro_), change __Boot disk__, choose all __Firewall__ then click __Create__
@@ -9,14 +14,34 @@ Until this step you have create your Virtual Machine
 
 ## SETTING VIRTUAL MACHINE
 
-* Open Virtual Machine from Instances Machine (_choose SSH and open in browser_)
-* Go into root, type `sudo su` on `terminal`
+* Open **Virtual Machine** from Instances Machine (_choose SSH and open in browser_)
+* Go into root, type 
+```js
+sudo su
+``` 
+
 * Install Nodejs from [this link](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) and choose for version 8
-* After install **Nodejs**, check the version by type `node -v` and check npm by type `npm -v`. It should return **node version 8.9.3** or next and **npm version 5.6** or next
+* After install **Nodejs**, check the version by type `node -v` and check npm by type `npm -v`. It should return **node version 8.9.4** or next and **npm version 5.6** or next
+```js
+node -v
+>>v8.9.4
+
+npm -v
+>>5.6.0
+```
 * Install **pm2** from [this link](http://pm2.keymetrics.io/docs/usage/quick-start/)
-* Install **Nginx** type on terminal `apt-get install nginx`
+* Install **Nginx** type on terminal 
+```js
+apt-get install nginx
+```
 * On terminal change directory type `cd /etc/nginx/sites-available`
 * Open file **default** and find `location/` type inside curly brace `proxy_pass http://localhost:3030;`
+
+```js
+location / {
+	proxy_pass http://localhost:3030
+}
+```
 
 Your Setting has done
 
@@ -36,11 +61,23 @@ Your Database has been created
 1 Choose directory into `/home/ubuntu` and clone your project into this folder
 2 Go into your directory project and create `.env` file. Input your config from your local into your vm
 3 Change your setting on `.env` 
-4 For your Development Setting, Change your `HOST`, `PORT`, `USER`, `PASS`, `DATABASE` into remote setting you have been created,
+4 For your Development Setting, Change your `HOST`, `PORT`, `USER`, `PASS`, `DATABASE`, `DIALECT` with the settings that you have been created,
+```js
+#DEVELOPMENT
+DB_DEV_HOST=<YOUR HOST NAME>
+DB_DEV_PORT=<YOUR OPEN PORT>
+DB_DEV_USER=<YOUR USER NAME>
+DB_DEV_PASS=<YOUR PASSWORD>
+DB_DEV=<YOUR DATABASE NAME>
+DB_DEV_DIALECT=<YOUR DIALECT>
+```
 5 After change all setting, then type on your terminal `npm install`. It will install what is in `package.json` file
 6 After finishing install, run migration type `sequelize db:migrate`and your seeders if you need
 7 Run your config script
-8 Run your api type `pm2 start app,js`
+8 Run your api type 
+```js
+pm2 start app,js
+```
 9 Check your running api, type `pm2 list` and see your running api. It should **online**
 10 To check the log, type `pm2 logs <id>`
 
