@@ -6,8 +6,14 @@
 
 - Click *Compute Engine* then click *VM Instances*
 - Click *Create Instances*
-- Then you should give __name__ of __instance__, choose __zone__  (_choose zone asia-shouteast1-a_), choose __machine type__, (_choose micro_), change __Boot disk__, choose all __Firewall__ then click __Create__
-- After click __Create__, wait until the instances running, and then klik on _Connect_ column and choose _Open in browser window_
+- Then you should :
+	- give __name__ of __instance__, 
+	- choose __zone__  (_choose zone asia-shouteast1-a_), 
+	- choose __machine type__, (_choose micro_), 
+	- change __Boot disk__, 
+	- choose all __Firewall__ 
+	- then click __Create__
+- After click __Create__, wait until the instances running, and then click on _Connect_ column and choose _Open in browser window_
 - After choose that, you will have command prompt
 
 Until this step you have create your Virtual Machine
@@ -21,7 +27,7 @@ sudo su
 ``` 
 
 * Install Nodejs from [this link](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) and choose for version 8
-* After install **Nodejs**, check the version by type `node -v` and check npm by type `npm -v`. It should return **node version 8.9.4** or next and **npm version 5.6** or next
+* After install **Nodejs**, check the version by type :
 ```js
 node -v
 >>v8.9.4
@@ -49,7 +55,11 @@ Your Setting has done
 
 * Go to **Google Cloud Platform** and click _Menu_ then choose menu _Storage_ and click _SQL_
 * Click _Create Instance_ and choose database engine **POSTGRESQL** then click *Next*
-* The you should give **Instance ID**, create **Password**, set **Region** and **Zone**. It should same as the Virtual Machine then click _Create_
+* The you should do this following: 
+	* give **Instance ID**, 
+	* create **Password**, 
+	* set **Region** and **Zone**,
+	* click _Create_
 * After the Instance created, click it and choose _Database_ Column and click _Create databse_ to create new database
 * Choose _Authorization_ Column and click _Add Network_
 * Input your IP Address of your Virtual Machine and Save the network. Your Virtual Machine has been connected to the database that you have been created
