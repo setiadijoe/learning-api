@@ -4,11 +4,11 @@
 
 ## CREATE VIRTUAL MACHINE IN GOOGLE CLOUD PLATFORM
 
-1 Click *Compute Engine* then click *VM Instances*
-2 Click *Create Instances*
-3 Then you should give __name__ of __instance__, choose __zone__  (_choose zone asia-shouteast1-a_), choose __machine type__, (_choose micro_), change __Boot disk__, choose all __Firewall__ then click __Create__
-4 After click __Create__, wait until the instances running, and then klik on _Connect_ column and choose _Open in browser window_
-5 After choose that, you will have command prompt
+1. Click *Compute Engine* then click *VM Instances*
+2. Click *Create Instances*
+3. Then you should give __name__ of __instance__, choose __zone__  (_choose zone asia-shouteast1-a_), choose __machine type__, (_choose micro_), change __Boot disk__, choose all __Firewall__ then click __Create__
+4. After click __Create__, wait until the instances running, and then klik on _Connect_ column and choose _Open in browser window_
+5. After choose that, you will have command prompt
 
 Until this step you have create your Virtual Machine
 
@@ -58,10 +58,10 @@ Your Database has been created
 
 ## DEPLOY YOUR API
 
-1 Choose directory into `/home/ubuntu` and clone your project into this folder
-2 Go into your directory project and create `.env` file. Input your config from your local into your vm
-3 Change your setting on `.env` 
-4 For your Development Setting, Change your `HOST`, `PORT`, `USER`, `PASS`, `DATABASE`, `DIALECT` with the settings that you have been created,
+1. Choose directory into `/home/ubuntu` and clone your project into this folder
+2. Go into your directory project and create `.env` file. Input your config from your local into your vm
+3. Change your setting on `.env` 
+4. For your Development Setting, Change your `HOST`, `PORT`, `USER`, `PASS`, `DATABASE`, `DIALECT` with the settings that you have been created,
 ```js
 #DEVELOPMENT
 DB_DEV_HOST=<YOUR HOST NAME>
@@ -71,14 +71,14 @@ DB_DEV_PASS=<YOUR PASSWORD>
 DB_DEV=<YOUR DATABASE NAME>
 DB_DEV_DIALECT=<YOUR DIALECT>
 ```
-5 After change all setting, then type on your terminal `npm install`. It will install what is in `package.json` file
-6 After finishing install, run migration type `sequelize db:migrate`and your seeders if you need
-7 Run your config script
-8 Run your api type 
+5. After change all setting, then type on your terminal `npm install`. It will install what is in `package.json` file
+6. After finishing install, run migration type `sequelize db:migrate`and your seeders if you need
+7. Run your config script
+8. Run your api type 
 ```js
 pm2 start app,js
 ```
-9 Check your running api, type `pm2 list` and see your running api. It should **online**
-10 To check the log, type `pm2 logs <id>`
+9. Check your running api, type `pm2 list` and see your running api. It should **online**
+10. To check the log, type `pm2 logs <id>`
 
 Then you check your api in postman or browser
