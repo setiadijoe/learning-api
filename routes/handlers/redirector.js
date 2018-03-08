@@ -13,7 +13,7 @@ const redirector = (request, h) => {
       va_number: null,
       amount: null,
       cust_name: null,
-      response_code: FASPAY_RESPONSE_CODE.FAILED
+      response_code: FASPAY_RESPONSE_CODE.Gagal
     }
   }
 }

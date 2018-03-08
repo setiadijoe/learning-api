@@ -12,7 +12,7 @@ module.exports.inquiry = async (request, h) => {
     va_number: null,
     amount: null,
     cust_name: null,
-    response_code: FASPAY_RESPONSE_CODE.FAILED
+    response_code: FASPAY_RESPONSE_CODE.Gagal
   }
 
   const user = await virtualAccountDetail(request.params.virtualAccount)
@@ -27,7 +27,7 @@ module.exports.inquiry = async (request, h) => {
       response.va_number = user.virtual_account_id
       response.amount = amount
       response.cust_name = `${user.first_name} ${user.last_name}`
-      response.response_code = FASPAY_RESPONSE_CODE.SUCCEED
+      response.response_code = FASPAY_RESPONSE_CODE.Sukses
       return response
     } else {
       return response
@@ -42,7 +42,7 @@ module.exports.payment = async (request, h) => {
   if (user) {
     let recordPayment = {
       virtual_account: user.virtual_account_id,
-      transaction_id: request.query.trx_id,
+      transaction_id: request.query.trx_uid,
       amount: request.query.amount,
       status: 'pending'
     }
@@ -53,7 +53,7 @@ module.exports.payment = async (request, h) => {
         va_number: recorded.virtual_account,
         amount: recorded.amount,
         cust_name: `${user.first_name} ${user.last_name}`,
-        response_code: FASPAY_RESPONSE_CODE.SUCCEED
+        response_code: FASPAY_RESPONSE_CODE.Sukses
       }
     }
   } else {
@@ -63,14 +63,14 @@ module.exports.payment = async (request, h) => {
         va_number: null,
         amount: null,
         cust_name: null,
-        response_code: FASPAY_RESPONSE_CODE.FAILED
+        response_code: FASPAY_RESPONSE_CODE.Gagal
       }
     }
   }
 }
 
-module.exports.paymentNotif = async (request, h) => {
-  const { request_type, trx_id, merchant_id, bill_no, amount, payment_status_code, payment_status_desc, signature } = request.payload
+module.exports.paymentNotif = async (r, h) => {
+  const { request, trx_id, merchant_id, bill_no, amount, payment_status_code, payment_status_desc, signature } = r.payload
   const updateObject = {
     merchant_id,
     bill_no,
@@ -79,18 +79,28 @@ module.exports.paymentNotif = async (request, h) => {
     status_desc: payment_status_desc
   }
 
-  if (checkSignature(signature, `${bill_no}.${payment_status_code}`)) {
+  if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
     const updateResponse = await updatePayment(trx_id, updateObject)
     if (!updateResponse[0]) {
       return Boom.badData('NO FIELDS UPDATED')
-    } else {
+    } else if (updateResponse[1][0].status_code === '2') {
       return {
-        response: request_type,
+        response: request,
         trx_id: updateResponse[1][0].transaction_id,
         merchant_id: updateResponse[1][0].merchant_id,
         bill_no: updateResponse[1][0].bill_no,
-        response_code: updateResponse[1][0].status_code,
-        response_desc: updateResponse[1][0].status_desc,
+        response_code: FASPAY_RESPONSE_CODE.Sukses,
+        response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+        response_date: updateResponse[1][0].updatedAt
+      }
+    } else {
+      return {
+        response: request,
+        trx_id: updateResponse[1][0].transaction_id,
+        merchant_id: updateResponse[1][0].merchant_id,
+        bill_no: updateResponse[1][0].bill_no,
+        response_code: FASPAY_RESPONSE_CODE.Gagal,
+        response_desc: Object.keys(FASPAY_RESPONSE_CODE)[1],
         response_date: updateResponse[1][0].updatedAt
       }
     }

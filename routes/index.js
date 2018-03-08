@@ -25,7 +25,7 @@ const routes = {
           },
           query: {
             type: Joi.string().valid('inquiry', 'payment'),
-            trx_id: Joi.string().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() }),
+            trx_uid: Joi.string().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() }),
             amount: Joi.number().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() })
           }
         },

@@ -1,8 +1,8 @@
 require('dotenv').config()
 
 module.exports.FASPAY_RESPONSE_CODE = {
-  SUCCEED: '00',
-  FAILED: '01'
+  Sukses: '00',
+  Gagal: '01'
 }
 
 module.exports.FASPAY_USER_LOGIN = {

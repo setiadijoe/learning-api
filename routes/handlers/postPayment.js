@@ -5,7 +5,7 @@ module.exports.pushPaymentNotif = {
   handler: paymentNotif,
   validate: {
     payload: {
-      request_type: Joi.string().required(),
+      request: Joi.string().required(),
       trx_id: Joi.string().alphanum().required(), // dipakai lagi
       merchant_id: Joi.number().required(), // dipakai lagi
       merchant: Joi.string().required(),

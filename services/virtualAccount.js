@@ -9,5 +9,6 @@ module.exports.virtualAccountDetail = virtualAccount => {
     where: {
       virtual_account_id: virtualAccount
     }
-  })
+  }).then(data => data )
+  .catch(err => err)
 }
