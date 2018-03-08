@@ -70,13 +70,14 @@ module.exports.payment = async (request, h) => {
 }
 
 module.exports.paymentNotif = async (r, h) => {
-  const { request, trx_id, merchant_id, bill_no, amount, payment_status_code, payment_status_desc, signature } = r.payload
+  const { request, trx_id, merchant_id, bill_no, payment_date, amount, payment_status_code, payment_status_desc, signature } = r.payload
   const updateObject = {
     merchant_id,
     bill_no,
     amount,
     status_code: payment_status_code,
-    status_desc: payment_status_desc
+    status_desc: payment_status_desc,
+    transaction_date: payment_date
   }
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
