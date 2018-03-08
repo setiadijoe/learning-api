@@ -77,7 +77,7 @@ module.exports.paymentNotif = async (r, h) => {
     amount,
     status_code: payment_status_code,
     status_desc: payment_status_desc,
-    transaction_date: payment_date
+    transaction_date: payment_date 
   }
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {

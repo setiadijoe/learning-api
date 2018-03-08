@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
     bill_no: DataTypes.STRING,
     amount: DataTypes.DECIMAL,
     status_code: DataTypes.STRING,
-    status_desc: DataTypes.STRING
+    status_desc: DataTypes.STRING,
+    transaction_date: DataTypes.DATE
   }, {
     classMethods: {
       associate: function(models) {
