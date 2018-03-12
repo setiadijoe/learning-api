@@ -22,14 +22,16 @@ async function requestAmount(loanId, token) {
   }).then(({data}) => data.data.amount)
 }
 
-async function sendRepayment (loanId, payload) {
+async function sendRepayment (loanId, token, payload) {
   return axios({
     method: 'post',
-    url: `/loan/${loanId}/repayment`,
-    data: payload
+    url: `${process.env.URL}/loan/${loanId}/repayment`,
+    data: payload,
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
   }).then(({data}) => {
-    console.log(data)
-    return data
+    return data.data
   })
   .catch(err => {
     console.log(err)

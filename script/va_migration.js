@@ -59,13 +59,11 @@ const migrateVa = async () => {
           return va
         })
       })
-      console.log(accounts)
     })
     .then(async (virtualAccounts) => {
       await asyncForEach(virtualAccounts, async (vaAccount) => {
         return await create(vaAccount)
       })
-      console.log(virtualAccounts[0])
     })
     .then(() => console.log('finish'))
     .catch(err => console.log(err))

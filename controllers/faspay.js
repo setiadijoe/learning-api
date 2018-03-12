@@ -3,7 +3,7 @@ const { fetchAccountId } = require('../services/getLoanDetail')
 const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
-const { insertPayment, updatePayment } = require('../services/payment')
+const { insertPayment, updatePayment, getLoanId, insertRepayment } = require('../services/payment')
 const { requestToken, requestAmount, sendRepayment } = require('../services/fetchAPI')
 
 module.exports.inquiry = async (request, h) => {
@@ -48,23 +48,19 @@ module.exports.payment = async (request, h) => {
     }
     const recorded = await insertPayment(recordPayment)
     return {
-      faspay: {
         response: 'VA Static Response',
         va_number: recorded.virtual_account,
         amount: recorded.amount,
         cust_name: `${user.first_name} ${user.last_name}`,
         response_code: FASPAY_RESPONSE_CODE.Sukses
-      }
     }
   } else {
     return {
-      faspay: {
         response: 'VA Static Response',
         va_number: null,
         amount: null,
         cust_name: null,
         response_code: FASPAY_RESPONSE_CODE.Gagal
-      }
     }
   }
 }
@@ -81,11 +77,20 @@ module.exports.paymentNotif = async (r, h) => {
   }
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
+    const token = await requestToken()
     const updateResponse = await updatePayment(trx_id, updateObject)
-    console.log('bentuk datanya ', updateResponse)
     if (!updateResponse[0]) {
       return Boom.badData('NO FIELDS UPDATED')
     } else if (updateResponse[1][0].status_code === '2') {
+      const loan_id = await getLoanId(updateResponse[1][0].virtual_account)
+      const payload = {
+        amount : updateResponse[1][0].amount,
+        payment_date: updateResponse[1][0].transaction_date,
+        notes: updateResponse[1][0].status_desc
+      }
+      const result = await sendRepayment(loan_id, token, payload)
+      const paymentDetail = await getPaymentDetail(trx_id)
+      await insertRepayment(paymentDetail.id, paymentDetail.status_desc)
       return {
         response: request,
         trx_id: updateResponse[1][0].transaction_id,

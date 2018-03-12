@@ -18,7 +18,48 @@ async function updatePayment (trx_id, updateObject) {
   }).then(data => data)
 }
 
+async function getLoanId (virtual_account) {
+  return Model.VirtualAccount.findOne({
+    where: {
+      virtual_account_id: virtual_account
+    }
+  })
+  .then(({loan_id}) => {
+    console.log(loan_id)
+    return loan_id
+  })
+  .catch(err => {
+    console.log(err)
+    return err
+  })
+} 
+
+async function getPaymentDetail (transaction_id) {
+  return Model.FaspayPayment.findOne({
+    where: {
+      transaction_id: transaction_id
+    }
+  })
+  .then(paymentDetail => {
+    return paymentDetail
+  })
+  .catch(err => {
+    console.error(err)
+    return err
+  })
+}
+
+async function insertRepayment (payment_id, status) {
+  return Model.Repayment.create({
+    faspay_payment_id: payment_id,
+    status: status
+  }).then(data => data)
+}
+
 module.exports = {
   insertPayment,
-  updatePayment
+  updatePayment,
+  getLoanId,
+  getPaymentDetail,
+  insertRepayment
 }
