@@ -4,7 +4,7 @@ const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
 const { insertPayment, updatePayment } = require('../services/payment')
-const { requestToken, requestAmount } = require('../services/fetchAPI')
+const { requestToken, requestAmount, sendRepayment } = require('../services/fetchAPI')
 
 module.exports.inquiry = async (request, h) => {
   const response = {
@@ -82,6 +82,7 @@ module.exports.paymentNotif = async (r, h) => {
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
     const updateResponse = await updatePayment(trx_id, updateObject)
+    console.log('bentuk datanya ', updateResponse)
     if (!updateResponse[0]) {
       return Boom.badData('NO FIELDS UPDATED')
     } else if (updateResponse[1][0].status_code === '2') {

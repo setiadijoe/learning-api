@@ -22,7 +22,23 @@ async function requestAmount(loanId, token) {
   }).then(({data}) => data.data.amount)
 }
 
+async function sendRepayment (loanId, payload) {
+  return axios({
+    method: 'post',
+    url: `/loan/${loanId}/repayment`,
+    data: payload
+  }).then(({data}) => {
+    console.log(data)
+    return data
+  })
+  .catch(err => {
+    console.log(err)
+    return err
+  })
+}
+
 module.exports = {
   requestToken,
-  requestAmount
+  requestAmount,
+  sendRepayment
 }
