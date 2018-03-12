@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       faspay_payment_id: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       status: {
         type: Sequelize.STRING
