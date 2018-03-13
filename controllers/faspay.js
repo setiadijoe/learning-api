@@ -85,23 +85,20 @@ module.exports.paymentNotif = async (r, h) => {
       const loan_id = await getLoanId(updateResponse[1][0].virtual_account)
       const payload = {
         amount : updateResponse[1][0].amount,
-        payment_date: updateResponse[1][0].transaction_date,
+        payment_date: moment.utc(moment(updateResponse[1][0].transaction_date)).toDate(),
         notes: updateResponse[1][0].status_desc
       }
-      try {
-        const paymentDetail = await getPaymentDetail(trx_id)
-      
-        if (paymentDetail && !paymentDetail.Repayment) {
-          const token = await requestToken()
 
-          const result = await sendRepayment(loan_id, token, payload)
-          console.log('hasilnya dapat? ', result)
-          const status_desc = result.status === 200 ? 'success' : 'failed'
-          console.log('status desc ', status_desc);
-          
+      const paymentDetail = await getPaymentDetail(trx_id)
+      if (paymentDetail && !paymentDetail.Repayment) {
+        // get token
+        const token = await requestToken()
+        const result = await sendRepayment(loan_id, token, payload)
+        const status_desc = result.status === 200 ? 'success' : 'failed'
+
+        // save to repayment table
+        try {
           const status_insert = await insertRepayment(paymentDetail.id, status_desc)
-          console.log('status inseret ', status_insert);
-          
           return {
             response: request,
             trx_id: updateResponse[1][0].transaction_id,
@@ -111,13 +108,12 @@ module.exports.paymentNotif = async (r, h) => {
             response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
             response_date: updateResponse[1][0].updatedAt
           }
+        } catch (e) {
+          console.log(e)
+          return Boom.badImplementation('Internal Server Error!')
         }
-      } catch (error) {
-        console.log(error)
-        return Boom.badImplementation('Internal Server Error!')
       }
-
-      return Boom.badData()
+      return Boom.badData('Transaction id does not exist!')
     } else {
       return {
         response: request,
