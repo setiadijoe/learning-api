@@ -1,4 +1,5 @@
 const Boom = require('boom')
+const moment = require('moment')
 const { fetchAccountId } = require('../services/getLoanDetail')
 const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
@@ -73,7 +74,7 @@ module.exports.paymentNotif = async (r, h) => {
     amount,
     status_code: payment_status_code,
     status_desc: payment_status_desc,
-    transaction_date: payment_date 
+    transaction_date: moment.utc(moment(payment_date))
   }
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
@@ -92,9 +93,14 @@ module.exports.paymentNotif = async (r, h) => {
       
         if (paymentDetail && !paymentDetail.Repayment) {
           const token = await requestToken()
+
           const result = await sendRepayment(loan_id, token, payload)
+          console.log('hasilnya dapat? ', result)
           const status_desc = result.status === 200 ? 'success' : 'failed'
+          console.log('status desc ', status_desc);
+          
           const status_insert = await insertRepayment(paymentDetail.id, status_desc)
+          console.log('status inseret ', status_insert);
           
           return {
             response: request,
