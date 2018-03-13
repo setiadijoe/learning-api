@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
     transaction_date: DataTypes.DATE
   });
   FaspayPayment.associate = function (models) {
-    FaspayPayment.belongsTo(models.Repayment)
+    models.FaspayPayment.hasOne(models.Repayment)
   }
   return FaspayPayment;
 };

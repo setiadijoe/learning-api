@@ -3,7 +3,7 @@ const { fetchAccountId } = require('../services/getLoanDetail')
 const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
-const { insertPayment, updatePayment, getLoanId, insertRepayment } = require('../services/payment')
+const { insertPayment, updatePayment, getLoanId, insertRepayment, getPaymentDetail } = require('../services/payment')
 const { requestToken, requestAmount, sendRepayment } = require('../services/fetchAPI')
 
 module.exports.inquiry = async (request, h) => {
@@ -90,15 +90,19 @@ module.exports.paymentNotif = async (r, h) => {
       }
       const result = await sendRepayment(loan_id, token, payload)
       const paymentDetail = await getPaymentDetail(trx_id)
-      await insertRepayment(paymentDetail.id, paymentDetail.status_desc)
-      return {
-        response: request,
-        trx_id: updateResponse[1][0].transaction_id,
-        merchant_id: updateResponse[1][0].merchant_id,
-        bill_no: updateResponse[1][0].bill_no,
-        response_code: FASPAY_RESPONSE_CODE.Sukses,
-        response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-        response_date: updateResponse[1][0].updatedAt
+      const status_insert = await insertRepayment(paymentDetail.id, paymentDetail.status_desc)
+      if (result && true || paymentDetail && true || status_insert && true) {
+        return {
+          response: request,
+          trx_id: updateResponse[1][0].transaction_id,
+          merchant_id: updateResponse[1][0].merchant_id,
+          bill_no: updateResponse[1][0].bill_no,
+          response_code: FASPAY_RESPONSE_CODE.Sukses,
+          response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+          response_date: updateResponse[1][0].updatedAt
+        }
+      } else {
+        return Boom.badImplementation('Something gonna wrong here!')
       }
     } else {
       return {

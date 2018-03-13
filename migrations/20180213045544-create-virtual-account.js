@@ -14,7 +14,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       loan_id: {
-        type: Sequelize.STRING
+        allowNull: true,
+        type: Sequelize.INTEGER
       },
       source: {
         allowNull: false,

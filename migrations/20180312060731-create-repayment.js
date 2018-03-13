@@ -9,7 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       faspay_payment_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'FaspayPayments',
+          key: 'id'
+        }
       },
       status: {
         type: Sequelize.STRING

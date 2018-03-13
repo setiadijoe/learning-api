@@ -3,7 +3,7 @@ module.exports = function(sequelize, DataTypes) {
   var VirtualAccount = sequelize.define('VirtualAccount', {
     account_id: DataTypes.INTEGER,
     source: DataTypes.STRING,
-    loan_id: DataTypes.STRING,
+    loan_id: DataTypes.INTEGER,
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     bank_code: DataTypes.STRING,

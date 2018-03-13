@@ -54,6 +54,7 @@ async function insertRepayment (payment_id, status) {
     faspay_payment_id: payment_id,
     status: status
   }).then(data => data)
+  .catch(err => err)
 }
 
 module.exports = {

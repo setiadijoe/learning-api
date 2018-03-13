@@ -1,12 +1,12 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   var Repayment = sequelize.define('Repayment', {
-    faspay_payment_id: DataTypes.Integer,
+    faspay_payment_id: DataTypes.INTEGER,
     status: DataTypes.STRING
   }, {});
   Repayment.associate = function(models) {
     // associations can be defined here
-    Repayment.hasOne(models.FaspayPayment)
+    models.Repayment.belongsTo(models.FaspayPayment)
   };
   return Repayment;
 };
