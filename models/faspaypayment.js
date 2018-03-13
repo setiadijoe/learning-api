@@ -9,12 +9,11 @@ module.exports = function(sequelize, DataTypes) {
     status_code: DataTypes.STRING,
     status_desc: DataTypes.STRING,
     transaction_date: DataTypes.DATE
-  }, {
-    classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
   });
+  FaspayPayment.associate = function (models) {
+    models.FaspayPayment.hasOne(models.Repayment, {
+      foreignKey: 'faspay_payment_id'
+    })
+  }
   return FaspayPayment;
 };

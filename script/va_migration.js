@@ -6,7 +6,7 @@ const getAllAccountDetail = () => ({
   name: 'get-account-detail',
   text: `
  SELECT
-   "A".id, "A".source, "A".source_id, "UD"."firstName", "UD"."lastName", "UD"."phoneNumber"
+   "A".id, "A".source, "A".source_id, "LA"."loan_id", "UD"."firstName",  "UD"."lastName", "UD"."phoneNumber"
  FROM
    "Accounts" as "A"
  INNER JOIN
@@ -55,6 +55,7 @@ const migrateVa = async () => {
         return accountVa.map(va => {
           va.first_name = account.firstName
           va.last_name = account.lastName
+          va.loan_id = account.loan_id
           return va
         })
       })

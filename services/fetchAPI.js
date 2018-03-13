@@ -22,7 +22,24 @@ async function requestAmount(loanId, token) {
   }).then(({data}) => data.data.amount)
 }
 
+async function sendRepayment (loanId, token, payload) {
+  return axios({
+    method: 'post',
+    url: `${process.env.URL}/loan/${loanId}/repayment`,
+    data: payload,
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((result) => {
+    return {
+      status: result.status,
+      data: result.data.data
+    }
+  })
+}
+
 module.exports = {
   requestToken,
-  requestAmount
+  requestAmount,
+  sendRepayment
 }

@@ -3,8 +3,8 @@ const { fetchAccountId } = require('../services/getLoanDetail')
 const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
-const { insertPayment, updatePayment } = require('../services/payment')
-const { requestToken, requestAmount } = require('../services/fetchAPI')
+const { insertPayment, updatePayment, getLoanId, insertRepayment, getPaymentDetail } = require('../services/payment')
+const { requestToken, requestAmount, sendRepayment } = require('../services/fetchAPI')
 
 module.exports.inquiry = async (request, h) => {
   const response = {
@@ -48,23 +48,19 @@ module.exports.payment = async (request, h) => {
     }
     const recorded = await insertPayment(recordPayment)
     return {
-      faspay: {
         response: 'VA Static Response',
         va_number: recorded.virtual_account,
         amount: recorded.amount,
         cust_name: `${user.first_name} ${user.last_name}`,
         response_code: FASPAY_RESPONSE_CODE.Sukses
-      }
     }
   } else {
     return {
-      faspay: {
         response: 'VA Static Response',
         va_number: null,
         amount: null,
         cust_name: null,
         response_code: FASPAY_RESPONSE_CODE.Gagal
-      }
     }
   }
 }
@@ -85,15 +81,37 @@ module.exports.paymentNotif = async (r, h) => {
     if (!updateResponse[0]) {
       return Boom.badData('NO FIELDS UPDATED')
     } else if (updateResponse[1][0].status_code === '2') {
-      return {
-        response: request,
-        trx_id: updateResponse[1][0].transaction_id,
-        merchant_id: updateResponse[1][0].merchant_id,
-        bill_no: updateResponse[1][0].bill_no,
-        response_code: FASPAY_RESPONSE_CODE.Sukses,
-        response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-        response_date: updateResponse[1][0].updatedAt
+      const loan_id = await getLoanId(updateResponse[1][0].virtual_account)
+      const payload = {
+        amount : updateResponse[1][0].amount,
+        payment_date: updateResponse[1][0].transaction_date,
+        notes: updateResponse[1][0].status_desc
       }
+      try {
+        const paymentDetail = await getPaymentDetail(trx_id)
+      
+        if (paymentDetail && !paymentDetail.Repayment) {
+          const token = await requestToken()
+          const result = await sendRepayment(loan_id, token, payload)
+          const status_desc = result.status === 200 ? 'success' : 'failed'
+          const status_insert = await insertRepayment(paymentDetail.id, status_desc)
+          
+          return {
+            response: request,
+            trx_id: updateResponse[1][0].transaction_id,
+            merchant_id: updateResponse[1][0].merchant_id,
+            bill_no: updateResponse[1][0].bill_no,
+            response_code: FASPAY_RESPONSE_CODE.Sukses,
+            response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+            response_date: updateResponse[1][0].updatedAt
+          }
+        }
+      } catch (error) {
+        console.log(error)
+        return Boom.badImplementation('Internal Server Error!')
+      }
+
+      return Boom.badData()
     } else {
       return {
         response: request,
