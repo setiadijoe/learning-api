@@ -77,7 +77,6 @@ module.exports.paymentNotif = async (r, h) => {
   }
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
-    const token = await requestToken()
     const updateResponse = await updatePayment(trx_id, updateObject)
     if (!updateResponse[0]) {
       return Boom.badData('NO FIELDS UPDATED')
@@ -88,22 +87,31 @@ module.exports.paymentNotif = async (r, h) => {
         payment_date: updateResponse[1][0].transaction_date,
         notes: updateResponse[1][0].status_desc
       }
-      const result = await sendRepayment(loan_id, token, payload)
-      const paymentDetail = await getPaymentDetail(trx_id)
-      const status_insert = await insertRepayment(paymentDetail.id, paymentDetail.status_desc)
-      if (result && true || paymentDetail && true || status_insert && true) {
-        return {
-          response: request,
-          trx_id: updateResponse[1][0].transaction_id,
-          merchant_id: updateResponse[1][0].merchant_id,
-          bill_no: updateResponse[1][0].bill_no,
-          response_code: FASPAY_RESPONSE_CODE.Sukses,
-          response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-          response_date: updateResponse[1][0].updatedAt
+      try {
+        const paymentDetail = await getPaymentDetail(trx_id)
+      
+        if (paymentDetail && !paymentDetail.Repayment) {
+          const token = await requestToken()
+          const result = await sendRepayment(loan_id, token, payload)
+          const status_desc = result.status === 200 ? 'success' : 'failed'
+          const status_insert = await insertRepayment(paymentDetail.id, status_desc)
+          
+          return {
+            response: request,
+            trx_id: updateResponse[1][0].transaction_id,
+            merchant_id: updateResponse[1][0].merchant_id,
+            bill_no: updateResponse[1][0].bill_no,
+            response_code: FASPAY_RESPONSE_CODE.Sukses,
+            response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+            response_date: updateResponse[1][0].updatedAt
+          }
         }
-      } else {
-        return Boom.badImplementation('Something gonna wrong here!')
+      } catch (error) {
+        console.log(error)
+        return Boom.badImplementation('Internal Server Error!')
       }
+
+      return Boom.badData()
     } else {
       return {
         response: request,

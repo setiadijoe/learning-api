@@ -30,12 +30,11 @@ async function sendRepayment (loanId, token, payload) {
     headers: {
       'Authorization': `Bearer ${token}`
     }
-  }).then(({data}) => {
-    return data.data
-  })
-  .catch(err => {
-    console.log(err)
-    return err
+  }).then((result) => {
+    return {
+      status: result.status,
+      data: result.data.data
+    }
   })
 }
 

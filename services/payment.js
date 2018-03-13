@@ -38,7 +38,11 @@ async function getPaymentDetail (transaction_id) {
   return Model.FaspayPayment.findOne({
     where: {
       transaction_id: transaction_id
-    }
+    }, include: [
+      {
+        model: Model.Repayment
+      }
+    ]
   })
   .then(paymentDetail => {
     return paymentDetail
