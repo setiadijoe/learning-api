@@ -74,7 +74,7 @@ module.exports.paymentNotif = async (r, h) => {
     amount,
     status_code: payment_status_code,
     status_desc: payment_status_desc,
-    transaction_date: moment.utc(moment(payment_date)).toDate()
+    transaction_date: moment(payment_date).utcOffset('-0700').format('YYYY-MM-DD HH:mm:ss')
   }
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
@@ -85,7 +85,7 @@ module.exports.paymentNotif = async (r, h) => {
       const loan_id = await getLoanId(updateResponse[1][0].virtual_account)
       const payload = {
         amount : updateResponse[1][0].amount,
-        payment_date: moment.utc(moment(updateResponse[1][0].transaction_date)).toDate(),
+        payment_date: moment(updateResponse[1][0].transaction_date).utcOffset('-0700').format('YYYY-MM-DD HH:mm:ss'),
         notes: updateResponse[1][0].status_desc
       }
 
