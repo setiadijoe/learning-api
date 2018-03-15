@@ -1,14 +1,36 @@
 const Boom = require('boom')
 const moment = require('moment')
-const { fetchAccountId } = require('../services/getLoanDetail')
+const { fetchLoanId } = require('../services/getAnID')
 const { checkSignature } = require('../utils/signature')
-const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
+const { FASPAY_RESPONSE_CODE, IDENTIFIER } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
 const { insertPayment, updatePayment, getLoanId, insertRepayment, getPaymentDetail } = require('../services/payment')
 const { requestToken, requestAmount, sendRepayment } = require('../services/fetchAPI')
+const { createResponse } = require('../utils/createResponse')
+
+const getTransactionAmount = async (virtualAccount, user) => {
+  const { source } = user
+  const identifier = IDENTIFIER[source]
+
+  if (!identifier) {
+    return Promise.reject('invalid account identifire')
+  }
+
+  let amount = 0
+  if (identifier === IDENTIFIER['LoanAccount']) {
+    try {
+      const token = await requestToken()
+      amount = await requestAmount(user.loan_id, token)
+      return Promise.resolve(amount)
+    } catch (e) {
+      return Promise.reject(e)
+    }
+  }
+  return Promise.resolve(amount)
+}
 
 module.exports.inquiry = async (request, h) => {
-  const response = {
+  let response = {
     response: 'VA Static Response',
     va_number: null,
     amount: null,
@@ -18,24 +40,20 @@ module.exports.inquiry = async (request, h) => {
 
   const user = await virtualAccountDetail(request.params.virtualAccount)
   if (user) {
-    const loan_id = await fetchAccountId(user.account_id)
-    let token
     if (checkSignature(request.params.signature, user.virtual_account_id)) {
-      if (!token) {
-        token = await requestToken()
+      try {
+        const amount = await getTransactionAmount(request.params.virtualAccount, user)
+        response.va_number = user.virtual_account_id
+        response.amount = amount
+        response.cust_name = `${user.first_name} ${user.last_name}`
+        response.response_code = FASPAY_RESPONSE_CODE.Sukses
+        return response
+      } catch (e) {
+        return response
       }
-      const amount = await requestAmount(loan_id, token)
-      response.va_number = user.virtual_account_id
-      response.amount = amount
-      response.cust_name = `${user.first_name} ${user.last_name}`
-      response.response_code = FASPAY_RESPONSE_CODE.Sukses
-      return response
-    } else {
-      return response
     }
-  } else {
-    return response
   }
+  return response
 }
 
 module.exports.payment = async (request, h) => {
@@ -53,7 +71,7 @@ module.exports.payment = async (request, h) => {
         va_number: recorded.virtual_account,
         amount: recorded.amount,
         cust_name: `${user.first_name} ${user.last_name}`,
-        response_code: FASPAY_RESPONSE_CODE.Sukses
+        response_code: FASPAY_RESPONSE_CODE.Sukses,
     }
   } else {
     return {

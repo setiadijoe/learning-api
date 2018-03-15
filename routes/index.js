@@ -1,7 +1,7 @@
 const Joi = require('joi')
 const redirector = require('./handlers/redirector')
 const virtualAccount = require('./handlers/virtualAccount')
-const postPayment = require('./handlers/postPayment')
+const notification = require('./handlers/notification')
 
 const routes = {
   register: (server, options) => {
@@ -45,7 +45,7 @@ const routes = {
     {
       method: 'POST',
       path: '/api',
-      config: postPayment.pushPaymentNotif
+      config: notification.pushPaymentNotif
     }
   ])
   },
