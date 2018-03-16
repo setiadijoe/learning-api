@@ -22,36 +22,29 @@ async function requestAmount(loanId, token) {
   }).then(({data}) => data.data.amount)
 }
 
-async function sendRepayment (loanId, token, payload) {
+async function paymentToAdminService (vaDetail, payload) {
+  const token = await requestToken()
+  let url= null
+  if (vaDetail.source === 'LenderAccount') {
+    payload.notes = 'top up via VA'
+    url = `${process.env.URL}/account/lender/${vaDetail.lender_account_id}/topup`
+  } else {
+    payload.notes = 'repayment via VA'
+    payload.payment_date = moment()
+    url = `${process.env.URL}/loan/${loanId}/repayment`
+  }
   return axios({
     method: 'post',
-    url: `${process.env.URL}/loan/${loanId}/repayment`,
+    url,
     data: payload,
     headers: {
       'Authorization': `Bearer ${token}`
-    }
-  }).then((result) => {
-    return {
-      status: result.status,
-      data: result.data.data
     }
   })
-}
-
-async function topupViaVA(lenderAccountId, token ,payload) {
-  return axios({
-    method: 'post',
-    url: `${process.env.URL}/account/lender/${lenderAccountId}/topup`,
-    data: payload,
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  }).then(data => data)
 }
 
 module.exports = {
   requestToken,
   requestAmount,
-  sendRepayment,
-  topupViaVA
+  paymentToAdminService
 }

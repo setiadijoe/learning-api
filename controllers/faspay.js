@@ -1,32 +1,11 @@
 const Boom = require('boom')
 const moment = require('moment')
-const { fetchLoanId } = require('../services/getAnID')
 const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE, IDENTIFIER } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
-const { insertPayment, updatePayment, getVirtualAccountDetail, insertRepayment, getPaymentDetail } = require('../services/payment')
-const { requestToken, requestAmount, sendRepayment, topupViaVA } = require('../services/fetchAPI')
-
-const getTransactionAmount = async (virtualAccount, user) => {
-  const { source } = user
-  const identifier = IDENTIFIER[source]
-
-  if (!identifier) {
-    return Promise.reject('invalid account identifier')
-  }
-
-  let amount = 0
-  if (identifier === IDENTIFIER['LoanAccount']) {
-    try {
-      const token = await requestToken()
-      amount = await requestAmount(user.loan_id, token)
-      return Promise.resolve(amount)
-    } catch (e) {
-      return Promise.reject(e)
-    }
-  }
-  return Promise.resolve(amount)
-}
+const { insertPayment, updatePayment, getVirtualAccountDetail, insertPaymentTransaction } = require('../services/payment')
+const { paymentToAdminService } = require('../services/fetchAPI')
+const { getTransactionAmount } = require('../services/inquiry')
 
 module.exports.inquiry = async (request, h) => {
   let response = {
@@ -53,19 +32,6 @@ module.exports.inquiry = async (request, h) => {
     }
   }
   return response
-}
-
-async function paymentToAdminService (vaDetail, token, payload) {
-  if (vaDetail.source === 'LenderAccount') {
-    payload.notes = 'Top Up Via VA'
-    const topupResult = await topupViaVA(vaDetail.lender_account_id, token, payload)
-    return topupResult
-  } else {
-    payload.notes = 'repayment via VA'
-    payload.payment_date = moment()
-    const paymentResult = await sendRepayment(vaDetail.loan_id, token, payload)
-    return paymentResult
-  }
 }
 
 module.exports.payment = async (request, h) => {
@@ -108,47 +74,41 @@ module.exports.paymentNotif = async (r, h) => {
   }
 
   if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
-    const updateResponse = await updatePayment(trx_id, updateObject)
-    if (!updateResponse[0]) {
-      return Boom.badData('NO FIELDS UPDATED')
-    } else {
-      const vaDetail = await getVirtualAccountDetail(updateResponse[1][0].virtual_account)
-      const paymentDetail = await getPaymentDetail(trx_id)
-        try {
-          let token = await requestToken()
-
-          const payload = {
-            amount: updateResponse[1][0].amount,
-            notes: null
-          }
-          const result = paymentToAdminService(vaDetail, token, payload)
-          try {
-            const status_insert = await insertRepayment(paymentDetail.id, status_desc)
-            return {
-              response: request,
-              trx_id,
-              merchant_id,
-              bill_no,
-              response_code: FASPAY_RESPONSE_CODE.Sukses,
-              response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-              response_date: moment()
-            }
-          } catch (e) {
-            return e
-          }
-        } catch (e) {
-          return {
-            response: request,
-            trx_id,
-            merchant_id,
-            bill_no,
-            response_code: FASPAY_RESPONSE_CODE.Sukses,
-            response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-            response_date: moment()
-          }
-        }       
+    try {
+      const payment = await updatePayment(trx_id, updateObject)
+      if (payment.status_code === '2') {
+        console.log('sesudah cek');
+        const vaDetail = await getVirtualAccountDetail(payment.virtual_account)
+        const payload = {
+          amount: payment.amount
+        }
+        const paymentResult = await paymentToAdminService (vaDetail, payload)
+        
+        const status_code = paymentResult.status === 200 ? 'success' : 'failed'
+        const transactionResult = await insertPaymentTransaction(payment.id, status_code)
+        return {
+          response: request,
+          trx_id,
+          merchant_id,
+          bill_no,
+          response_code: FASPAY_RESPONSE_CODE.Sukses,
+          response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+          response_date: moment()
+        }
       }
-    } else {
-      return Boom.badRequest('YOUR SIGNATURE IS INVALID')
+    } catch (e) {
+      console.error(e)
+      return {
+        response: request,
+        trx_id,
+        merchant_id,
+        bill_no,
+        response_code: FASPAY_RESPONSE_CODE.Gagal,
+        response_desc: Object.keys(FASPAY_RESPONSE_CODE)[1],
+        response_date: moment()
+      }
     }
+  } else {
+    return Boom.badRequest('YOUR SIGNATURE IS INVALID')
+  }
 }

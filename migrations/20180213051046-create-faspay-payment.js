@@ -17,7 +17,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       transaction_id: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       merchant_id: {
         type: Sequelize.STRING
