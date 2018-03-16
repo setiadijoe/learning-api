@@ -4,16 +4,15 @@ const { fetchLoanId } = require('../services/getAnID')
 const { checkSignature } = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE, IDENTIFIER } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
-const { insertPayment, updatePayment, getLoanId, insertRepayment, getPaymentDetail } = require('../services/payment')
-const { requestToken, requestAmount, sendRepayment } = require('../services/fetchAPI')
-const { createResponse } = require('../utils/createResponse')
+const { insertPayment, updatePayment, getVirtualAccountDetail, insertRepayment, getPaymentDetail } = require('../services/payment')
+const { requestToken, requestAmount, sendRepayment, topupViaVA } = require('../services/fetchAPI')
 
 const getTransactionAmount = async (virtualAccount, user) => {
   const { source } = user
   const identifier = IDENTIFIER[source]
 
   if (!identifier) {
-    return Promise.reject('invalid account identifire')
+    return Promise.reject('invalid account identifier')
   }
 
   let amount = 0
@@ -54,6 +53,19 @@ module.exports.inquiry = async (request, h) => {
     }
   }
   return response
+}
+
+async function paymentToAdminService (vaDetail, token, payload) {
+  if (vaDetail.source === 'LenderAccount') {
+    payload.notes = 'Top Up Via VA'
+    const topupResult = await topupViaVA(vaDetail.lender_account_id, token, payload)
+    return topupResult
+  } else {
+    payload.notes = 'repayment via VA'
+    payload.payment_date = moment()
+    const paymentResult = await sendRepayment(vaDetail.loan_id, token, payload)
+    return paymentResult
+  }
 }
 
 module.exports.payment = async (request, h) => {
@@ -99,51 +111,44 @@ module.exports.paymentNotif = async (r, h) => {
     const updateResponse = await updatePayment(trx_id, updateObject)
     if (!updateResponse[0]) {
       return Boom.badData('NO FIELDS UPDATED')
-    } else if (updateResponse[1][0].status_code === '2') {
-      const loan_id = await getLoanId(updateResponse[1][0].virtual_account)
-      const payload = {
-        amount : updateResponse[1][0].amount,
-        payment_date: moment(updateResponse[1][0].transaction_date).utcOffset('-0700').format('YYYY-MM-DD HH:mm:ss'),
-        notes: updateResponse[1][0].status_desc
-      }
-
+    } else {
+      const vaDetail = await getVirtualAccountDetail(updateResponse[1][0].virtual_account)
       const paymentDetail = await getPaymentDetail(trx_id)
-      if (paymentDetail && !paymentDetail.Repayment) {
-        // get token
-        const token = await requestToken()
-        const result = await sendRepayment(loan_id, token, payload)
-        const status_desc = result.status === 200 ? 'success' : 'failed'
-
-        // save to repayment table
         try {
-          const status_insert = await insertRepayment(paymentDetail.id, status_desc)
-          return {
-            response: request,
-            trx_id: updateResponse[1][0].transaction_id,
-            merchant_id: updateResponse[1][0].merchant_id,
-            bill_no: updateResponse[1][0].bill_no,
-            response_code: FASPAY_RESPONSE_CODE.Sukses,
-            response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-            response_date: updateResponse[1][0].updatedAt
+          let token = await requestToken()
+
+          const payload = {
+            amount: updateResponse[1][0].amount,
+            notes: null
+          }
+          const result = paymentToAdminService(vaDetail, token, payload)
+          try {
+            const status_insert = await insertRepayment(paymentDetail.id, status_desc)
+            return {
+              response: request,
+              trx_id,
+              merchant_id,
+              bill_no,
+              response_code: FASPAY_RESPONSE_CODE.Sukses,
+              response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+              response_date: moment()
+            }
+          } catch (e) {
+            return e
           }
         } catch (e) {
-          console.log(e)
-          return Boom.badImplementation('Internal Server Error!')
-        }
+          return {
+            response: request,
+            trx_id,
+            merchant_id,
+            bill_no,
+            response_code: FASPAY_RESPONSE_CODE.Sukses,
+            response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+            response_date: moment()
+          }
+        }       
       }
-      return Boom.badData('Transaction id does not exist!')
     } else {
-      return {
-        response: request,
-        trx_id: updateResponse[1][0].transaction_id,
-        merchant_id: updateResponse[1][0].merchant_id,
-        bill_no: updateResponse[1][0].bill_no,
-        response_code: FASPAY_RESPONSE_CODE.Gagal,
-        response_desc: Object.keys(FASPAY_RESPONSE_CODE)[1],
-        response_date: updateResponse[1][0].updatedAt
-      }
+      return Boom.badRequest('YOUR SIGNATURE IS INVALID')
     }
-  } else {
-    return Boom.badRequest('YOUR SIGNATURE IS INVALID')
-  }
 }

@@ -18,18 +18,16 @@ async function updatePayment (trx_id, updateObject) {
   }).then(data => data)
 }
 
-async function getLoanId (virtual_account) {
+async function getVirtualAccountDetail (virtual_account) {
   return Model.VirtualAccount.findOne({
     where: {
       virtual_account_id: virtual_account
     }
   })
-  .then(({loan_id}) => {
-    console.log(loan_id)
-    return loan_id
+  .then((data) => {
+    return data
   })
   .catch(err => {
-    console.log(err)
     return err
   })
 } 
@@ -53,8 +51,8 @@ async function getPaymentDetail (transaction_id) {
   })
 }
 
-async function insertRepayment (payment_id, status) {
-  return Model.Repayment.create({
+async function insertPaymentTransaction (payment_id, status) {
+  return Model.PaymentTransaction.create({
     faspay_payment_id: payment_id,
     status: status
   }).then(data => data)
@@ -64,7 +62,7 @@ async function insertRepayment (payment_id, status) {
 module.exports = {
   insertPayment,
   updatePayment,
-  getLoanId,
+  getVirtualAccountDetail,
   getPaymentDetail,
-  insertRepayment
+  insertPaymentTransaction
 }

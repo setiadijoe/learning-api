@@ -38,8 +38,20 @@ async function sendRepayment (loanId, token, payload) {
   })
 }
 
+async function topupViaVA(lenderAccountId, token ,payload) {
+  return axios({
+    method: 'post',
+    url: `${process.env.URL}/account/lender/${lenderAccountId}/topup`,
+    data: payload,
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then(data => data)
+}
+
 module.exports = {
   requestToken,
   requestAmount,
-  sendRepayment
+  sendRepayment,
+  topupViaVA
 }
