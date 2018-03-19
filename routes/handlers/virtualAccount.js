@@ -12,5 +12,6 @@ module.exports.generateVa = {
       firstName: Joi.string().required(),
       lastName: Joi.string()
     }
-  }
+  },
+  description: 'generate VA'
 }

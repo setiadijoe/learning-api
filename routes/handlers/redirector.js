@@ -1,11 +1,11 @@
 const { FASPAY_RESPONSE_CODE } = require('../../helpers/constant')
-const inquiry = require('./inquiry');
+const { inquiry, payment } = require('./../../controllers/faspay')
 
 const redirector = (request, h) => {
-  if ( request.query.type === 'inquiry') {
+  if (request.query.type === 'inquiry') {
     return inquiry(request, h)
-  } else if ( request.query.type === 'payment') {
-    return 'payment'
+  } else if (request.query.type === 'payment') {
+    return payment(request, h)
   }
   return {
     response: {
@@ -13,7 +13,7 @@ const redirector = (request, h) => {
       va_number: null,
       amount: null,
       cust_name: null,
-      response_code: FASPAY_RESPONSE_CODE.FAILED
+      response_code: FASPAY_RESPONSE_CODE.Gagal
     }
   }
 }

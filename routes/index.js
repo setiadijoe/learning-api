@@ -1,6 +1,10 @@
 const Joi = require('joi')
 const redirector = require('./handlers/redirector')
 const virtualAccount = require('./handlers/virtualAccount')
+<<<<<<< HEAD
+const postPayment = require('./handlers/postPayment')
+=======
+>>>>>>> e802fc5a870772d2b070fad6aaef8578e2d9c450
 
 const routes = {
   register: (server, options) => {
@@ -8,23 +12,23 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: (request, h) => 'It works buddy',
+        handler: async (request, h) => `It's work buddy`,
         description: 'Root API',
         notes: 'return server status'
       }
     },
     {
       method: 'GET',
-      path: '/{VA}/{signature}',
+      path: '/{virtualAccount}/{signature}',
       config: {
         validate: {
           params: {
-            VA: Joi.string().alphanum(),
+            virtualAccount: Joi.string().alphanum(),
             signature: Joi.string().token()
           },
           query: {
             type: Joi.string().valid('inquiry', 'payment'),
-            trx_id: Joi.string().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() }),
+            trx_uid: Joi.string().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() }),
             amount: Joi.number().when('type', { is: 'payment', then: Joi.required(), otherwise: Joi.invalid() })
           }
         },
@@ -40,6 +44,11 @@ const routes = {
       method: 'POST',
       path: '/faspay/generate',
       config: virtualAccount.generateVa
+    },
+    {
+      method: 'POST',
+      path: '/api',
+      config: postPayment.pushPaymentNotif
     }
   ])
   },

@@ -1,11 +1,9 @@
-const bankPrefix = {
-  'permata': process.env.permataPrefix || '555555',
-  'bca': process.env.bcaPrefix || '666666'
-}
+require('dotenv').config()
+const { IDENTIFIER } = require('./../helpers/constant')
 
-const identifier = {
-  'LenderAccount': '1',
-  'LoanAccount': '2'
+const bankPrefix = {
+  'permata': process.env.PREFIX_PERMATA,
+  'bca': process.env.PREFIX_BCA
 }
 
 module.exports.generateVa = (accountId, accountSource, phoneNumber) => {
@@ -13,7 +11,7 @@ module.exports.generateVa = (accountId, accountSource, phoneNumber) => {
 
   Object.keys(bankPrefix).forEach(bank => {
     const prefix = bankPrefix[bank]
-    const primaryVa = prefix + identifier[accountSource] + accountId
+    const primaryVa = prefix + IDENTIFIER[accountSource] + accountId
     const additionalVa = phoneNumber.slice(primaryVa.length - 16)
 
     const virtualAccount = primaryVa + additionalVa
