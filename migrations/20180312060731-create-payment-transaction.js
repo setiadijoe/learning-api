@@ -3,7 +3,7 @@ const { createAuditTriggerQuery } = require('./../utils/migration')
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    const tableName = 'Repayments'
+    const tableName = 'PaymentTransactions'
     return queryInterface.createTable(tableName, {
       id: {
         allowNull: false,
@@ -35,6 +35,6 @@ module.exports = {
     }).then(() => queryInterface.sequelize.query(createAuditTriggerQuery(tableName)));
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Repayments');
+    return queryInterface.dropTable('PaymentTransactions');
   }
 };

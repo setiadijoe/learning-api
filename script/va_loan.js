@@ -2,7 +2,7 @@ const db = require('../db/connection')
 const { generateVa } = require('./../utils/virtualAccount')
 const { create } = require('./../services/virtualAccount')
 
-const getAllAccountDetail = () => ({
+const getAllLoanDetail = () => ({
   name: 'get-account-detail',
   text: `
  SELECT
@@ -36,9 +36,9 @@ const getAllAccountDetail = () => ({
  `
 })
 
-const getAccountDetail = async () => {
-  accountDetail = await db.query(getAllAccountDetail())
-  return accountDetail.rows
+const getLoanDetail = async () => {
+  loanDetail = await db.query(getAllLoanDetail())
+  return loanDetail.rows
 }
 
 const asyncForEach = async (array, callback) => {
@@ -47,8 +47,8 @@ const asyncForEach = async (array, callback) => {
   }
 }
 
-const migrateVa = async () => {
-  getAccountDetail()
+const migrateLoan = async () => {
+  getLoanDetail()
     .then((accounts) => {
       return accounts.map(account => {
         const accountVa = generateVa(account.id, account.source, account.phoneNumber)
@@ -69,4 +69,6 @@ const migrateVa = async () => {
     .catch(err => console.log(err))
 }
 
-migrateVa()
+
+
+migrateLoan()

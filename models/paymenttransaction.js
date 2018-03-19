@@ -1,14 +1,14 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var Repayment = sequelize.define('Repayment', {
+  var PaymentTransaction = sequelize.define('PaymentTransaction', {
     faspay_payment_id: DataTypes.INTEGER,
     status: DataTypes.STRING
   }, {});
-  Repayment.associate = function(models) {
+  PaymentTransaction.associate = function(models) {
     // associations can be defined here
-    models.Repayment.belongsTo(models.FaspayPayment, {
+    models.PaymentTransaction.belongsTo(models.FaspayPayment, {
       foreignKey: 'faspay_payment_id'
     })
   };
-  return Repayment;
+  return PaymentTransaction;
 };

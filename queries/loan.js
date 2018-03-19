@@ -1,4 +1,4 @@
-module.exports.fetchAccountById = (accountId) => ({
+module.exports.fetchLoanById = (accountId) => ({
   name: 'fetch-loanId',
   text: `
   SELECT 
