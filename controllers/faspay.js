@@ -43,13 +43,17 @@ module.exports.payment = async (request, h) => {
       amount: request.query.amount,
       status: 'pending'
     }
-    const recorded = await insertPayment(recordPayment)
-    return {
-        response: 'VA Static Response',
-        va_number: recorded.virtual_account,
-        amount: recorded.amount,
-        cust_name: user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`,
-        response_code: FASPAY_RESPONSE_CODE.Sukses,
+    try {
+      const recorded = await insertPayment(recordPayment)
+      return {
+          response: 'VA Static Response',
+          va_number: recorded.virtual_account,
+          amount: recorded.amount,
+          cust_name: user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`,
+          response_code: FASPAY_RESPONSE_CODE.Sukses,
+      }
+    } catch (e) {
+      return Boom.badData('Duplicate Transaction Id')
     }
   } else {
     return {
