@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
@@ -9,14 +9,14 @@ module.exports = {
       last_name: 'Orowaro',
       bank_code: 'BCA',
       virtual_account_id: '7100002937461587989'
-    },{
+    }, {
       account_id: 101010102,
       source: 'LoanAccount',
       first_name: 'Alam',
       last_name: 'Bahnasa',
       bank_code: 'BCA',
       virtual_account_id: '7100008791637617892'
-    }], {});
+    }], {})
   },
 
   down: function (queryInterface, Sequelize) {
@@ -28,4 +28,4 @@ module.exports = {
       return queryInterface.bulkDelete('Person', null, {});
     */
   }
-};
+}

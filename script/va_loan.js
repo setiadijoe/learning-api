@@ -37,7 +37,7 @@ const getAllLoanDetail = () => ({
 })
 
 const getLoanDetail = async () => {
-  loanDetail = await db.query(getAllLoanDetail())
+  const loanDetail = await db.query(getAllLoanDetail())
   return loanDetail.rows
 }
 
@@ -62,13 +62,12 @@ const migrateLoan = async () => {
     })
     .then(async (virtualAccounts) => {
       await asyncForEach(virtualAccounts, async (vaAccount) => {
-        return await create(vaAccount)
+        const createdVa = await create(vaAccount)
+        return createdVa
       })
     })
     .then(() => console.log('finish'))
     .catch(err => console.log(err))
 }
-
-
 
 migrateLoan()
