@@ -18,4 +18,4 @@ const redirector = (request, h) => {
   }
 }
 
-module.exports = redirector;
+module.exports = redirector

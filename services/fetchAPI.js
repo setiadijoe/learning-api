@@ -3,7 +3,7 @@ const moment = require('moment')
 
 const axios = require('axios')
 
-async function requestToken() {
+async function requestToken () {
   return axios({
     method: 'post',
     url: `${process.env.URL}/signin-by-key`,
@@ -13,7 +13,7 @@ async function requestToken() {
   }).then(({data}) => data.token)
 }
 
-async function requestAmount(loanId, token) {
+async function requestAmount (loanId, token) {
   return axios({
     method: 'get',
     url: `${process.env.URL}/loan/${loanId}/repayment/nextRepaymentAmount`,
@@ -25,7 +25,7 @@ async function requestAmount(loanId, token) {
 
 async function paymentToAdminService (vaDetail, payload) {
   const token = await requestToken()
-  let url= null
+  let url = null
   if (vaDetail.source === 'LenderAccount') {
     payload.notes = 'top up via VA'
     url = `${process.env.URL}/account/lender/${vaDetail.lender_account_id}/topup`

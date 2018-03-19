@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config()
 
 module.exports = {
   development: {
@@ -27,4 +27,4 @@ module.exports = {
     dialect: process.env.DB_PRD_DIALECT,
     logging: false
   }
-};
+}

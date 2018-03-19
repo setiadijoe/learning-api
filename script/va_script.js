@@ -43,7 +43,7 @@ const getIdNotHaveVA = (arrayId) => ({
 })
 
 const getDistinctId = async () => {
-  let listId = await Model.VirtualAccount.findAll({ attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('account_id')),'account_id']]})
+  let listId = await Model.VirtualAccount.findAll({ attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('account_id')), 'account_id']] })
   return listId.map(account => account.account_id)
 }
 
@@ -52,7 +52,6 @@ const getAccountIdList = async () => {
   let result = await db.query(getIdNotHaveVA(listId))
   return result.rows
 }
-
 
 const asyncForEach = async (array, callback) => {
   for (let index = 0; index < array.length; index++) {
@@ -76,7 +75,8 @@ const migrateVa = async () => {
     .then(async (virtualAccounts) => {
       await asyncForEach(virtualAccounts, async (vaAccount) => {
         console.log(`VA of ${vaAccount[0].first_name} ${vaAccount[0].last_name} is being created`)
-        return await create(vaAccount)
+        const createdVa = await create(vaAccount)
+        return createdVa
       })
     })
     .then(() => console.log('finish'))
@@ -85,6 +85,6 @@ const migrateVa = async () => {
 
 migrateVa()
 
-const job = schedule.scheduleJob('* */30 * * * *', function () {
+const job = schedule.scheduleJob('* */30 * * * *', function () { // eslint-disable-line no-unused-vars
   migrateVa()
 })
