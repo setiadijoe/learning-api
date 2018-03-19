@@ -39,11 +39,6 @@ const routes = {
     },
     {
       method: 'POST',
-      path: '/faspay/generate',
-      config: virtualAccount.generateVa
-    },
-    {
-      method: 'POST',
       path: '/api',
       config: notification.pushPaymentNotif
     }
