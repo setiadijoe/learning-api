@@ -4,7 +4,6 @@ const routes = require('./../routes')
 const Environment = ConfigServer['env']
 const AppVersion = ConfigServer['version']
 
-
 const plugins = {
   server: {
     port: ConfigServer.port,
@@ -45,4 +44,4 @@ if (Environment.toLowerCase() === 'development') {
   })
 }
 
-module.exports = plugins;
+module.exports = plugins

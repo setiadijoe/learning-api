@@ -10,5 +10,5 @@ module.exports.checkSignature = (signature, payload) => {
   const password = FASPAY_USER_LOGIN.PASSWORD
 
   const hashedSignature = this.hashSignature(this.hashSignature(`${userId}${password}${payload}`, 'md5'), 'sha1')
-  return signature !== hashedSignature ? false : true
+  return signature === hashedSignature
 }

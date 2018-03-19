@@ -1,7 +1,7 @@
 const Boom = require('boom')
 const moment = require('moment')
 const { checkSignature } = require('../utils/signature')
-const { FASPAY_RESPONSE_CODE, IDENTIFIER } = require('../helpers/constant')
+const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const { virtualAccountDetail } = require('../services/virtualAccount')
 const { insertPayment, updatePayment, getVirtualAccountDetail, insertPaymentTransaction } = require('../services/payment')
 const { paymentToAdminService } = require('../services/fetchAPI')
@@ -46,22 +46,22 @@ module.exports.payment = async (request, h) => {
     try {
       const recorded = await insertPayment(recordPayment)
       return {
-          response: 'VA Static Response',
-          va_number: recorded.virtual_account,
-          amount: recorded.amount,
-          cust_name: user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`,
-          response_code: FASPAY_RESPONSE_CODE.Sukses,
+        response: 'VA Static Response',
+        va_number: recorded.virtual_account,
+        amount: recorded.amount,
+        cust_name: user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`,
+        response_code: FASPAY_RESPONSE_CODE.Sukses
       }
     } catch (e) {
       return Boom.badData('Duplicate Transaction Id')
     }
   } else {
     return {
-        response: 'VA Static Response',
-        va_number: null,
-        amount: null,
-        cust_name: null,
-        response_code: FASPAY_RESPONSE_CODE.Gagal
+      response: 'VA Static Response',
+      va_number: null,
+      amount: null,
+      cust_name: null,
+      response_code: FASPAY_RESPONSE_CODE.Gagal
     }
   }
 }
@@ -85,10 +85,10 @@ module.exports.paymentNotif = async (r, h) => {
         const payload = {
           amount: payment.amount
         }
-        const paymentResult = await paymentToAdminService (vaDetail, payload)
-        
+        const paymentResult = await paymentToAdminService(vaDetail, payload)
+
         const status_code = paymentResult.status === 200 ? 'success' : 'failed'
-        const transactionResult = await insertPaymentTransaction(payment.id, status_code)
+        await insertPaymentTransaction(payment.id, status_code)
         return {
           response: request,
           trx_id,

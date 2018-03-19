@@ -1,6 +1,5 @@
 const Joi = require('joi')
 const redirector = require('./handlers/redirector')
-const virtualAccount = require('./handlers/virtualAccount')
 const notification = require('./handlers/notification')
 
 const routes = {
@@ -42,9 +41,9 @@ const routes = {
       path: '/api',
       config: notification.pushPaymentNotif
     }
-  ])
+    ])
   },
   name: 'routes-plugin'
 }
 
-module.exports = routes;
+module.exports = routes

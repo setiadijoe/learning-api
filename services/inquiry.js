@@ -1,4 +1,4 @@
-const {  IDENTIFIER } = require('../helpers/constant')
+const { IDENTIFIER } = require('../helpers/constant')
 const { requestToken, requestAmount } = require('../services/fetchAPI')
 
 module.exports.getTransactionAmount = async (virtualAccount, user) => {
@@ -6,7 +6,7 @@ module.exports.getTransactionAmount = async (virtualAccount, user) => {
   const identifier = IDENTIFIER[source]
 
   if (!identifier) {
-    return Promise.reject('invalid account identifier')
+    return Promise.reject(new Error('invalid account identifier'))
   }
 
   let amount = 0
@@ -16,7 +16,7 @@ module.exports.getTransactionAmount = async (virtualAccount, user) => {
       amount = await requestAmount(user.loan_id, token)
       return amount
     } catch (e) {
-      return Promise.reject(e)
+      return Promise.reject(new Error(e))
     }
   }
   return Promise.resolve(amount)

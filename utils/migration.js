@@ -1,4 +1,4 @@
-function createAuditTriggerQuery( tableName ) {
+function createAuditTriggerQuery (tableName) {
   /* Usage
    * return queryInterface.createTable( tableName , {
    *   ...
@@ -6,7 +6,7 @@ function createAuditTriggerQuery( tableName ) {
    * })
    * .then( ()=> queryInterface.sequelize.query( util.createAuditTriggerQuery( tableName ) ) ); // Add audit table and audit trigger
    */
-  return  `CREATE TABLE "${tableName}_A" (
+  return `CREATE TABLE "${tableName}_A" (
             id          integer,
             before      hstore,
             after       hstore,
@@ -60,9 +60,9 @@ function createAuditTriggerQuery( tableName ) {
           CREATE TRIGGER "TG_${tableName}_D"
             AFTER DELETE ON "${tableName}"
               FOR EACH ROW
-          EXECUTE PROCEDURE "A_${tableName}_D"();`;
+          EXECUTE PROCEDURE "A_${tableName}_D"();`
 }
 
 module.exports = {
   createAuditTriggerQuery
-};
+}

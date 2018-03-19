@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 module.exports = {
-  up: function(queryInterface, Sequelize) {
+  up: function (queryInterface, Sequelize) {
     const tableName = 'VirtualAccounts'
     return queryInterface.createTable(tableName, {
       id: {
@@ -47,9 +47,9 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: new Date()
       }
-    });
+    })
   },
-  down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('VirtualAccounts');
+  down: function (queryInterface, Sequelize) {
+    return queryInterface.dropTable('VirtualAccounts')
   }
-};
+}
