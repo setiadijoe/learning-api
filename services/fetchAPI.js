@@ -1,4 +1,5 @@
 require('dotenv').config()
+const moment = require('moment')
 
 const axios = require('axios')
 
@@ -31,7 +32,7 @@ async function paymentToAdminService (vaDetail, payload) {
   } else {
     payload.notes = 'repayment via VA'
     payload.payment_date = moment()
-    url = `${process.env.URL}/loan/${loanId}/repayment`
+    url = `${process.env.URL}/loan/${vaDetail.loan_id}/repayment`
   }
   return axios({
     method: 'post',

@@ -23,7 +23,7 @@ module.exports.inquiry = async (request, h) => {
         const amount = await getTransactionAmount(request.params.virtualAccount, user)
         response.va_number = user.virtual_account_id
         response.amount = amount
-        response.cust_name = `${user.first_name} ${user.last_name}`
+        response.cust_name = user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`
         response.response_code = FASPAY_RESPONSE_CODE.Sukses
         return response
       } catch (e) {
@@ -48,7 +48,7 @@ module.exports.payment = async (request, h) => {
         response: 'VA Static Response',
         va_number: recorded.virtual_account,
         amount: recorded.amount,
-        cust_name: `${user.first_name} ${user.last_name}`,
+        cust_name: user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`,
         response_code: FASPAY_RESPONSE_CODE.Sukses,
     }
   } else {
@@ -77,7 +77,6 @@ module.exports.paymentNotif = async (r, h) => {
     try {
       const payment = await updatePayment(trx_id, updateObject)
       if (payment.status_code === '2') {
-        console.log('sesudah cek');
         const vaDetail = await getVirtualAccountDetail(payment.virtual_account)
         const payload = {
           amount: payment.amount
