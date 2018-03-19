@@ -2,8 +2,8 @@ require('dotenv').config()
 const { IDENTIFIER } = require('./../helpers/constant')
 
 const bankPrefix = {
-  'permata': process.env.PREFIX_PERMATA || '555555',
-  'bca': process.env.PREFIX_BCA || '666666'
+  'permata': process.env.PREFIX_PERMATA,
+  'bca': process.env.PREFIX_BCA
 }
 
 module.exports.generateVa = (accountId, accountSource, phoneNumber) => {
