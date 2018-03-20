@@ -1,11 +1,12 @@
 const Boom = require('boom')
 const moment = require('moment')
-const { checkSignature } = require('../utils/signature')
+const signatureUtils = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
-const { virtualAccountDetail } = require('../services/virtualAccount')
-const { insertPayment, updatePayment, getVirtualAccountDetail, insertPaymentTransaction } = require('../services/payment')
+const vaService = require('../services/virtualAccount')
+const { updatePayment, getVirtualAccountDetail, insertPaymentTransaction } = require('../services/payment')
+const paymentService = require('./../services/payment')
 const { paymentToAdminService } = require('../services/fetchAPI')
-const { getTransactionAmount } = require('../services/inquiry')
+const inquiry = require('../services/inquiry')
 
 module.exports.inquiry = async (request, h) => {
   let response = {
@@ -15,18 +16,18 @@ module.exports.inquiry = async (request, h) => {
     cust_name: null,
     response_code: FASPAY_RESPONSE_CODE.Gagal
   }
-
-  const user = await virtualAccountDetail(request.params.virtualAccount)
+  const user = await vaService.virtualAccountDetail(request.params.virtualAccount)
   if (user) {
-    if (checkSignature(request.params.signature, user.virtual_account_id)) {
+    if (signatureUtils.checkSignature(request.params.signature, user.virtual_account_id)) {
       try {
-        const amount = await getTransactionAmount(request.params.virtualAccount, user)
+        const amount = await inquiry.getTransactionAmount(user)
         response.va_number = user.virtual_account_id
-        response.amount = amount
+        response.amount = Math.ceil(amount)
         response.cust_name = user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`
         response.response_code = FASPAY_RESPONSE_CODE.Sukses
         return response
       } catch (e) {
+        console.log(e)
         return response
       }
     }
@@ -35,7 +36,7 @@ module.exports.inquiry = async (request, h) => {
 }
 
 module.exports.payment = async (request, h) => {
-  const user = await virtualAccountDetail(request.params.virtualAccount)
+  const user = await vaService.virtualAccountDetail(request.params.virtualAccount)
   if (user) {
     let recordPayment = {
       virtual_account: user.virtual_account_id,
@@ -44,7 +45,7 @@ module.exports.payment = async (request, h) => {
       status: 'pending'
     }
     try {
-      const recorded = await insertPayment(recordPayment)
+      const recorded = await paymentService.insertPayment(recordPayment)
       return {
         response: 'VA Static Response',
         va_number: recorded.virtual_account,
@@ -77,7 +78,7 @@ module.exports.paymentNotif = async (r, h) => {
     transaction_date: moment(payment_date).utcOffset('-0700').format('YYYY-MM-DD HH:mm:ss')
   }
 
-  if (checkSignature(signature, `${bill_no}${payment_status_code}`)) {
+  if (signatureUtils.checkSignature(signature, `${bill_no}${payment_status_code}`)) {
     try {
       const payment = await updatePayment(trx_id, updateObject)
       if (payment.status_code === '2') {

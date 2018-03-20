@@ -1,8 +1,8 @@
 const { IDENTIFIER } = require('../helpers/constant')
-const { requestToken, requestAmount } = require('../services/fetchAPI')
+const fetchApi = require('../services/fetchAPI')
 
-module.exports.getTransactionAmount = async (virtualAccount, user) => {
-  const { source } = user
+module.exports.getTransactionAmount = async (accountDetail) => {
+  const { source } = accountDetail
   const identifier = IDENTIFIER[source]
 
   if (!identifier) {
@@ -12,11 +12,11 @@ module.exports.getTransactionAmount = async (virtualAccount, user) => {
   let amount = 0
   if (identifier === IDENTIFIER['LoanAccount']) {
     try {
-      const token = await requestToken()
-      amount = await requestAmount(user.loan_id, token)
+      const token = await fetchApi.requestToken()
+      amount = await fetchApi.requestAmount(accountDetail.loan_id, token)
       return amount
     } catch (e) {
-      return Promise.reject(new Error(e))
+      return Promise.reject(new Error('Cannot request to API!'))
     }
   }
   return Promise.resolve(amount)

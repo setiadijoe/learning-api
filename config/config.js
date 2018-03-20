@@ -11,11 +11,11 @@ module.exports = {
     logging: console.log
   },
   test: {
-    username: process.env.DB_TEST_USER,
-    password: process.env.DB_TEST_PASS,
-    database: process.env.DB_TEST,
-    host: process.env.DB_TEST_HOST,
-    dialect: process.env.DB_TEST_DIALECT,
+    username: process.env.DB_TEST_USER || 'postgres',
+    password: process.env.DB_TEST_PASS || 'postgres',
+    database: process.env.DB_TEST || 'faspay-payment-test',
+    host: process.env.DB_TEST_HOST || 'localhost',
+    dialect: process.env.DB_TEST_DIALECT || 'postgres',
     logging: false
   },
   production: {
