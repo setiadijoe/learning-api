@@ -21,6 +21,11 @@ describe('Virtual Account Detail', () => {
     vaService.virtualAccountDetail(va).then(data => {
       expect(data.virtual_account_id).toEqual(va)
       expect(data.loan_id).toEqual(1)
+      expect(data.lender_account_id).toBeNull()
+      expect(data.source).toEqual('LoanAccount')
+      expect(data.first_name).toEqual('Husni')
+      expect(data.last_name).toEqual('Patrick')
+      expect(data.bank_code).toEqual('BCA')
       done()
     })
   })
