@@ -20,9 +20,9 @@ module.exports.inquiry = async (request, h) => {
   if (user) {
     if (checkSignature(request.params.signature, user.virtual_account_id)) {
       try {
-        const amount = await getTransactionAmount(request.params.virtualAccount, user)
+        const amount = await getTransactionAmount(user)
         response.va_number = user.virtual_account_id
-        response.amount = amount
+        response.amount = Math.ceil(amount)
         response.cust_name = user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`
         response.response_code = FASPAY_RESPONSE_CODE.Sukses
         return response
