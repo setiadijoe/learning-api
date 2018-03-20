@@ -24,7 +24,7 @@
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "seed": "./node_modules/.bin/sequelize db:seed:all",
     "sequelize": "./node_modules/.bin/sequelize",
-    "test": "npm run lint && jest"
+    "test": "cross-env NODE_ENV=test npm run lint && jest"
   },
   "devDependencies": {
     "blipp": "^3.0.0",
@@ -42,6 +42,7 @@
     "jest": "^22.4.2",
     "lab": "^15.3.0",
     "mocha": "^5.0.4",
+    "testdouble": "^3.5.2",
     "vision": "^5.3.1"
   }
 }
