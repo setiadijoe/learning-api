@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  up: function (queryInterface, Sequelize) {
+  up: (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -10,13 +10,16 @@ module.exports = {
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
     queryInterface.addColumn(
-      'FaspayPayments',
-      'transaction_date',
-      Sequelize.DATE
+      'VirtualAccounts',
+      'lender_account_id',
+      {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      }
     )
   },
 
-  down: function (queryInterface, Sequelize) {
+  down: (queryInterface, Sequelize) => {
     /*
       Add reverting commands here.
       Return a promise to correctly handle asynchronicity.

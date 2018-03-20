@@ -1,5 +1,5 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
+'use strict'
+module.exports = function (sequelize, DataTypes) {
   var FaspayPayment = sequelize.define('FaspayPayment', {
     virtual_account: DataTypes.STRING,
     transaction_id: DataTypes.STRING,
@@ -9,11 +9,11 @@ module.exports = function(sequelize, DataTypes) {
     status_code: DataTypes.STRING,
     status_desc: DataTypes.STRING,
     transaction_date: DataTypes.DATE
-  });
+  })
   FaspayPayment.associate = function (models) {
-    models.FaspayPayment.hasOne(models.Repayment, {
+    models.FaspayPayment.hasOne(models.PaymentTransaction, {
       foreignKey: 'faspay_payment_id'
     })
   }
-  return FaspayPayment;
-};
+  return FaspayPayment
+}

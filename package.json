@@ -7,7 +7,6 @@
     "axios": "^0.18.0",
     "boom": "^7.1.1",
     "dotenv": "^5.0.0",
-    "faker": "^4.1.0",
     "glue": "^5.0.0",
     "hapi": "^17.2.0",
     "hapi-swagger": "^9.0.2",
@@ -21,6 +20,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "lint": "./node_modules/.bin/eslint .",
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "seed": "./node_modules/.bin/sequelize db:seed:all",
     "sequelize": "./node_modules/.bin/sequelize"
@@ -28,6 +28,12 @@
   "devDependencies": {
     "blipp": "^3.0.0",
     "code": "^5.2.0",
+    "eslint": "^4.19.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
     "faker": "^4.1.0",
     "inert": "^5.1.0",
     "lab": "^15.3.0",

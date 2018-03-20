@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
 const { createAuditTriggerQuery } = require('./../utils/migration')
 
 module.exports = {
-  up: function(queryInterface, Sequelize) {
+  up: function (queryInterface, Sequelize) {
     const tableName = 'FaspayPayments'
 
     return queryInterface.createTable('FaspayPayments', {
@@ -17,7 +17,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       transaction_id: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       merchant_id: {
         type: Sequelize.STRING
@@ -44,9 +45,9 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: new Date()
       }
-    }).then(() => queryInterface.sequelize.query(createAuditTriggerQuery(tableName)));
+    }).then(() => queryInterface.sequelize.query(createAuditTriggerQuery(tableName)))
   },
-  down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('FaspayPayments');
+  down: function (queryInterface, Sequelize) {
+    return queryInterface.dropTable('FaspayPayments')
   }
-};
+}

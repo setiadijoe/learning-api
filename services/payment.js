@@ -6,65 +6,38 @@ async function insertPayment (data) {
     transaction_id: data.transaction_id,
     amount: data.amount,
     status: data.status
-  }).then(data => data)
+  })
 }
 
 async function updatePayment (trx_id, updateObject) {
-  return Model.FaspayPayment.update(updateObject, {
+  return Model.FaspayPayment.findOne({
     where: {
       transaction_id: trx_id
-    },
-    returning: true
-  }).then(data => data)
+    }
+  }).then(payment => {
+    if (!payment) return Promise.reject(new Error('Transaction Id Not Found!'))
+    return payment.updateAttributes(updateObject)
+  })
 }
 
-async function getLoanId (virtual_account) {
+async function getVirtualAccountDetail (virtual_account) {
   return Model.VirtualAccount.findOne({
     where: {
       virtual_account_id: virtual_account
     }
   })
-  .then(({loan_id}) => {
-    console.log(loan_id)
-    return loan_id
-  })
-  .catch(err => {
-    console.log(err)
-    return err
-  })
-} 
-
-async function getPaymentDetail (transaction_id) {
-  return Model.FaspayPayment.findOne({
-    where: {
-      transaction_id: transaction_id
-    }, include: [
-      {
-        model: Model.Repayment
-      }
-    ]
-  })
-  .then(paymentDetail => {
-    return paymentDetail
-  })
-  .catch(err => {
-    console.error(err)
-    return err
-  })
 }
 
-async function insertRepayment (payment_id, status) {
-  return Model.Repayment.create({
+async function insertPaymentTransaction (payment_id, status) {
+  return Model.PaymentTransaction.create({
     faspay_payment_id: payment_id,
     status: status
-  }).then(data => data)
-  .catch(err => err)
+  })
 }
 
 module.exports = {
   insertPayment,
   updatePayment,
-  getLoanId,
-  getPaymentDetail,
-  insertRepayment
+  getVirtualAccountDetail,
+  insertPaymentTransaction
 }

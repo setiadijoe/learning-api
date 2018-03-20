@@ -7,7 +7,7 @@ module.exports.pushPaymentNotif = {
   validate: {
     payload: {
       request: Joi.string().required(),
-      trx_id: Joi.string().alphanum().required(), 
+      trx_id: Joi.string().alphanum().required(),
       merchant_id: Joi.number().required().valid(process.env.MERCHANT_ID),
       merchant: Joi.string().required().valid(process.env.MERCHANT_NAME),
       bill_no: Joi.string().alphanum().required(),

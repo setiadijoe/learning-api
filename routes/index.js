@@ -1,10 +1,6 @@
 const Joi = require('joi')
 const redirector = require('./handlers/redirector')
-const virtualAccount = require('./handlers/virtualAccount')
-<<<<<<< HEAD
-const postPayment = require('./handlers/postPayment')
-=======
->>>>>>> e802fc5a870772d2b070fad6aaef8578e2d9c450
+const notification = require('./handlers/notification')
 
 const routes = {
   register: (server, options) => {
@@ -12,7 +8,7 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: async (request, h) => `It's work buddy`,
+        handler: async (request, h) => `OK!`,
         description: 'Root API',
         notes: 'return server status'
       }
@@ -42,17 +38,12 @@ const routes = {
     },
     {
       method: 'POST',
-      path: '/faspay/generate',
-      config: virtualAccount.generateVa
-    },
-    {
-      method: 'POST',
       path: '/api',
-      config: postPayment.pushPaymentNotif
+      config: notification.pushPaymentNotif
     }
-  ])
+    ])
   },
   name: 'routes-plugin'
 }
 
-module.exports = routes;
+module.exports = routes
