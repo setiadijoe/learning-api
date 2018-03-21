@@ -8,34 +8,55 @@ const schedule = require('node-schedule')
 const getIdNotHaveVA = (arrayId) => ({
   name: 'Id-not-have-VA',
   text: `
-    SELECT
-      "A".id, "A".source, "A".source_id, "UD"."firstName", "UD"."lastName", "UD"."phoneNumber"
-    FROM
-      "Accounts" as "A"
-    INNER JOIN
-      "LoanAccounts" as "LA"
-    ON
-      "LA".id = "A".source_id AND "A".source = 'LoanAccount'
-    INNER JOIN
-      "Loans" as "L"
-    ON
-      "L".id = "LA".loan_id
-    INNER JOIN
-      "LoanProposals" as "LP"
-    ON
-      "LP".id = "L".proposal_id
-    INNER JOIN
-      "BorrowerEntities" as "BE"
-    ON
-      "BE".id = "LP".borrower_entity_id
-    INNER JOIN
-      "User" as "U"
-    ON
-      "U".id = "BE".user_id
-    INNER JOIN
-      "UserDetailIndividual" as "UD"
-    ON
-      "UD"."userId" = "U".id
+  SELECT
+  "A".id, "A".source, "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber", "SourceAccount".loan_id, "SourceAccount".id as source_id
+FROM
+  "Accounts" as "A"
+INNER JOIN
+(
+  SELECT
+    'LoanAccount' AS type, "LoanA".id, loan_id, "U".id AS "user_id"
+  FROM
+    "LoanAccounts" "LoanA"
+  INNER JOIN
+    "Loans" "L"
+  ON
+    "L".id = "LoanA".loan_id
+  INNER JOIN
+    "LoanProposals" "LP"
+  ON
+    "LP".id = "L".proposal_id
+  INNER JOIN
+    "BorrowerEntities" "BE"
+  ON
+    "BE".id = "LP".borrower_entity_id
+  INNER JOIN
+    "User" "U"
+  ON
+    "U".id = "BE".user_id
+  UNION
+  SELECT
+    'LenderAccount' as type, "LenderA".id, NULL AS loan_id, "LenderA".user_id
+  FROM
+    "LenderAccounts" "LenderA"
+  INNER JOIN
+    "User" "U"
+  ON
+  "U".id = "LenderA".user_id
+) "SourceAccount"
+ON ("A".source_id = "SourceAccount".id and "SourceAccount".type = "A".source)
+INNER JOIN (
+  SELECT
+    "userId", 'individual'::varchar AS userType, "firstName", "lastName", "phoneNumber"
+  FROM
+    "UserDetailIndividual"
+  UNION SELECT
+    "userId", 'institutional'::varchar AS userType, "companyName" AS "firstName", NULL as "lastName", "phoneNumber"
+  FROM
+  "UserDetailInstitutionals"
+) "Detail"
+ON
+  "SourceAccount".user_id = "Detail"."userId"
     WHERE NOT
       "A".id = ANY($1::int[])
   `,
@@ -68,6 +89,8 @@ const migrateVa = async () => {
         return accountVa.map(va => {
           va.first_name = account.firstName
           va.last_name = account.lastName
+          va.loan_id = account.source === 'LoanAccount' ? account.loan_id : null
+          va.lender_account_id = account.source === 'LenderAccount' ? account.source_id : null
           return va
         })
       })
@@ -82,8 +105,6 @@ const migrateVa = async () => {
     .then(() => console.log('finish'))
     .catch(err => console.log(err))
 }
-
-migrateVa()
 
 const job = schedule.scheduleJob('* */30 * * * *', function () { // eslint-disable-line no-unused-vars
   migrateVa()
