@@ -11,20 +11,20 @@ module.exports = {
     logging: console.log
   },
   test: {
-    username: process.env.DB_TEST_USER,
-    password: process.env.DB_TEST_PASS,
-    database: process.env.DB_TEST,
-    host: process.env.DB_TEST_HOST,
-    dialect: process.env.DB_TEST_DIALECT,
+    username: process.env.DB_TEST_ADMINSERVICE_USER,
+    password: process.env.DB_TEST_ADMINSERVICE_PASS,
+    database: process.env.DB_TEST_ADMINSERVICE,
+    host: process.env.DB_TEST_ADMINSERVICE_HOST,
+    dialect: process.env.DB_TEST_ADMINSERVICE_DIALECT,
     logging: false
   },
   production: {
-    username: process.env.DB_PRD_USER,
-    password: process.env.DB_PRD_PASS,
-    database: process.env.DB_PRD,
-    host: process.env.DB_PRD_HOST,
-    port: process.env.DB_PRD_PORT,
-    dialect: process.env.DB_PRD_DIALECT,
+    username: process.env.DB_PRD_ADMINSERVICE_USER,
+    password: process.env.DB_PRD_ADMINSERVICE_PASS,
+    database: process.env.DB_PRD_ADMINSERVICE,
+    host: process.env.DB_PRD_ADMINSERVICE_HOST,
+    port: process.env.DB_PRD_ADMINSERVICE_PORT,
+    dialect: process.env.DB_PRD_ADMINSERVICE_DIALECT,
     logging: false
   }
 }
