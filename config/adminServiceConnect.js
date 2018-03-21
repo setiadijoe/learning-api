@@ -11,7 +11,7 @@ module.exports = {
     logging: console.log
   },
   test: {
-    username: process.env.DB_TEST_ADMINSERVICE_USER,
+    user: process.env.DB_TEST_ADMINSERVICE_USER,
     password: process.env.DB_TEST_ADMINSERVICE_PASS,
     database: process.env.DB_TEST_ADMINSERVICE,
     host: process.env.DB_TEST_ADMINSERVICE_HOST,
@@ -19,7 +19,7 @@ module.exports = {
     logging: false
   },
   production: {
-    username: process.env.DB_PRD_ADMINSERVICE_USER,
+    user: process.env.DB_PRD_ADMINSERVICE_USER,
     password: process.env.DB_PRD_ADMINSERVICE_PASS,
     database: process.env.DB_PRD_ADMINSERVICE,
     host: process.env.DB_PRD_ADMINSERVICE_HOST,
