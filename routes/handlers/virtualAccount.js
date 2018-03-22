@@ -20,7 +20,7 @@ module.exports.getVirtualAccountDetail = {
   handler: controller.getVirtualAccountDetail,
   validate: {
     query: {
-      accountId: Joi.string(),
+      accountId: Joi.number(),
       loanId: Joi.number(),
       lenderAccountId: Joi.number()
     }
