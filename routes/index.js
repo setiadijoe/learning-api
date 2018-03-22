@@ -46,6 +46,10 @@ const routes = {
       method: 'POST',
       path: '/api',
       config: notification.pushPaymentNotif
+    }, {
+      method: 'POST',
+      path: '/va/generate',
+      config: virtualAccount.generateVa
     }
     ])
   },

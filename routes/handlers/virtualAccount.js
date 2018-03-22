@@ -7,13 +7,14 @@ module.exports.generateVa = {
     payload: {
       accountId: Joi.number().required(),
       accountSource: Joi.string().valid('LenderAccount', 'LoanAccount').required(),
-      lenderAccountId: Joi.number(),
+      loanId: Joi.number().when('accountSource', { is: 'LoanAccount', then: Joi.required(), otherwise: Joi.invalid() }),
+      lenderAccountId: Joi.number().when('accountSource', { is: 'LenderAccount', then: Joi.required(), otherwise: Joi.invalid() }),
       phoneNumber: Joi.string().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string()
     }
   },
-  description: 'generate VA'
+  description: 'Generate Virtual Account.'
 }
 
 module.exports.getVirtualAccountDetail = {
