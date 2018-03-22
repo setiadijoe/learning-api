@@ -86,7 +86,14 @@ module.exports.paymentNotif = async (r, h) => {
         const payload = {
           amount: payment.amount
         }
-        const paymentResult = await paymentToAdminService(vaDetail, payload)
+
+        let paymentResult = null
+        try {
+          paymentResult = await paymentToAdminService(vaDetail, payload)
+        } catch (e) {
+          console.log('error when sending to admin service, please check to admin-service!!')
+          paymentResult = { status: 500 }
+        }
 
         const status_code = paymentResult.status === 200 ? 'success' : 'failed'
         await insertPaymentTransaction(payment.id, status_code)
@@ -99,9 +106,19 @@ module.exports.paymentNotif = async (r, h) => {
           response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
           response_date: moment()
         }
+      } else {
+        return {
+          response: request,
+          trx_id,
+          merchant_id,
+          bill_no,
+          response_code: FASPAY_RESPONSE_CODE.Sukses,
+          response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
+          response_date: moment()
+        }
       }
     } catch (e) {
-      console.error(e)
+      console.log(e)
       return {
         response: request,
         trx_id,
@@ -113,6 +130,15 @@ module.exports.paymentNotif = async (r, h) => {
       }
     }
   } else {
-    return Boom.badRequest('YOUR SIGNATURE IS INVALID')
+    console.log('Your Signature is not valid!!')
+    return {
+      response: request,
+      trx_id,
+      merchant_id,
+      bill_no,
+      response_code: FASPAY_RESPONSE_CODE.Gagal,
+      response_desc: Object.keys(FASPAY_RESPONSE_CODE)[1],
+      response_date: moment()
+    }
   }
 }
