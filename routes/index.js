@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const redirector = require('./handlers/redirector')
 const notification = require('./handlers/notification')
+const virtualAccount = require('./handlers/virtualAccount')
 
 const routes = {
   register: (server, options) => {
@@ -35,6 +36,11 @@ const routes = {
         2. Check signature and get response like inquiry-Endpoint
         3. Check query type and get response as needed`
       }
+    },
+    {
+      method: 'GET',
+      path: '/virtualAccountDetail',
+      config: virtualAccount.getVirtualAccountDetail
     },
     {
       method: 'POST',

@@ -15,3 +15,15 @@ module.exports.generateVa = {
   },
   description: 'generate VA'
 }
+
+module.exports.getVirtualAccountDetail = {
+  handler: controller.getVirtualAccountDetail,
+  validate: {
+    query: {
+      accountId: Joi.string(),
+      loanId: Joi.number(),
+      lenderAccountId: Joi.number()
+    }
+  },
+  description: 'fetch Virtual Account using accountId, or loanId, or lenderAccountId'
+}

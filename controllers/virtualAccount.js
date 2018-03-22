@@ -16,3 +16,11 @@ module.exports.generateVa = (request, h) => {
       return Boom.badData(new Error(err))
     })
 }
+
+module.exports.getVirtualAccountDetail = (request, h) => {
+  const { accountId, loanId, lenderAccountId } = request.query
+  if (!accountId && !loanId && !lenderAccountId) {
+    return Boom.badRequest('Need at least 1 query!!')
+  }
+  return services.vaDetail(accountId, loanId, lenderAccountId)
+}
