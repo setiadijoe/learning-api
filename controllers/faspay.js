@@ -3,7 +3,7 @@ const moment = require('moment')
 const signatureUtils = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const vaService = require('../services/virtualAccount')
-const { updatePayment, getVirtualAccountDetail, insertPaymentTransaction } = require('../services/payment')
+const { updatePayment, insertPaymentTransaction } = require('../services/payment')
 const paymentService = require('./../services/payment')
 const { paymentToAdminService } = require('../services/fetchAPI')
 const inquiry = require('../services/inquiry')
@@ -82,7 +82,7 @@ module.exports.paymentNotif = async (r, h) => {
     try {
       const payment = await updatePayment(trx_id, updateObject)
       if (payment.status_code === '2') {
-        const vaDetail = await getVirtualAccountDetail(payment.virtual_account)
+        const vaDetail = await vaService.virtualAccountDetail(payment.virtual_account)
         const payload = {
           amount: payment.amount
         }
