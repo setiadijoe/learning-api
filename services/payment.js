@@ -16,7 +16,7 @@ async function updatePayment (trx_id, updateObject) {
     }
   }).then(payment => {
     if (!payment) return Promise.reject(new Error('Transaction Id Not Found!'))
-    if (payment.status_code === '2') return Promise.reject(new Error('Cannot update payment with status_co = 2!!'))
+    if (payment.status_code === '2') return Promise.reject(new Error('Cannot update payment with status_code = 2!!'))
     return payment.updateAttributes(updateObject)
   })
 }
