@@ -7,7 +7,7 @@ const { updatePayment, insertPaymentTransaction } = require('../services/payment
 const paymentService = require('./../services/payment')
 const { paymentToAdminService } = require('../services/fetchAPI')
 const inquiry = require('../services/inquiry')
-const { notifyForPayment, notifyForTopup } = require('../services/notification')
+const { notifyToSlack } = require('../services/notification')
 
 module.exports.inquiry = async (request, h) => {
   let response = {
@@ -105,12 +105,7 @@ module.exports.paymentNotif = async (r, h) => {
           bank_name: vaDetail.bank_code.toUpperCase(),
           date: moment()
         }
-        if (vaDetail.loan_id) {
-          slackPayload.loan_id = vaDetail.loan_id
-          notifyForPayment(slackPayload)
-        } else {
-          notifyForTopup(slackPayload)
-        }
+        notifyToSlack(vaDetail.loan_id, slackPayload)
         return {
           response: request,
           trx_id,
