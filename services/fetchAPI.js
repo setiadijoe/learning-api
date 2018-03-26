@@ -43,21 +43,8 @@ async function paymentToAdminService (vaDetail, payload) {
   })
 }
 
-async function notifyToSlack (payload) {
-  return axios({
-    method: 'post',
-    url: process.env.SLACK_URL,
-    data: {
-      channel: '#faspay-notification',
-      text: '',
-      data: payload
-    }
-  })
-}
-
 module.exports = {
   requestToken,
   requestAmount,
-  paymentToAdminService,
-  notifyToSlack
+  paymentToAdminService
 }
