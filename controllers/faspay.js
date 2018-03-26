@@ -105,7 +105,13 @@ module.exports.paymentNotif = async (r, h) => {
           bank_name: vaDetail.bank_code.toUpperCase(),
           date: moment()
         }
-        notifyToSlack(vaDetail.loan_id, slackPayload)
+
+        let channelName = '#faspay-topup'
+        if (vaDetail.loan_id) {
+          Object.assign(slackPayload, { loan_id: vaDetail.loan_id })
+          channelName = '#faspay-repayment'
+        }
+        notifyToSlack(slackPayload, channelName)
         return {
           response: request,
           trx_id,
