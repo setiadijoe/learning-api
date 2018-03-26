@@ -1,6 +1,5 @@
 require('dotenv').config()
 const moment = require('moment')
-
 const axios = require('axios')
 
 async function requestToken () {
@@ -44,8 +43,21 @@ async function paymentToAdminService (vaDetail, payload) {
   })
 }
 
+async function notifyToSlack (payload) {
+  return axios({
+    method: 'post',
+    url: process.env.SLACK_URL,
+    data: {
+      channel: '#faspay-notification',
+      text: '',
+      data: payload
+    }
+  })
+}
+
 module.exports = {
   requestToken,
   requestAmount,
-  paymentToAdminService
+  paymentToAdminService,
+  notifyToSlack
 }

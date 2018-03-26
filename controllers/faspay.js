@@ -5,7 +5,7 @@ const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const vaService = require('../services/virtualAccount')
 const { updatePayment, insertPaymentTransaction } = require('../services/payment')
 const paymentService = require('./../services/payment')
-const { paymentToAdminService } = require('../services/fetchAPI')
+const { paymentToAdminService, notifyToSlack } = require('../services/fetchAPI')
 const inquiry = require('../services/inquiry')
 
 module.exports.inquiry = async (request, h) => {
@@ -97,6 +97,13 @@ module.exports.paymentNotif = async (r, h) => {
 
         const status_code = paymentResult.status === 200 ? 'success' : 'failed'
         await insertPaymentTransaction(payment.id, status_code)
+        const slackPayload = {
+          transaction_id: trx_id,
+          billing_number: bill_no,
+          status: Object.keys(FASPAY_RESPONSE_CODE)[0],
+          date: moment()
+        }
+        await notifyToSlack(slackPayload)
         return {
           response: request,
           trx_id,
