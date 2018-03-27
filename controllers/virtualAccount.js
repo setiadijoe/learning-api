@@ -29,10 +29,20 @@ module.exports.generateVa = (request, h) => {
     })
 }
 
-module.exports.getVirtualAccountDetail = (request, h) => {
+module.exports.getVirtualAccountDetail = async (request, h) => {
   const { accountId, loanId, lenderAccountId } = request.query
   if (!accountId && !loanId && !lenderAccountId) {
     return Boom.badRequest('Need at least 1 query!!')
   }
-  return services.vaDetail(accountId, loanId, lenderAccountId)
+  try {
+    const virtualAccounts = await services.vaDetail(accountId, loanId, lenderAccountId)
+    return virtualAccounts.map((va) => ({
+      accountId: va.account_id,
+      virtualAccountId: va.virtual_account_id,
+      bankCode: va.bank_code.toUpperCase()
+    }))
+  } catch (e) {
+    console.log(e)
+    return e
+  }
 }
