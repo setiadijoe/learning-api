@@ -1,6 +1,5 @@
 require('dotenv').config()
 const moment = require('moment')
-
 const axios = require('axios')
 
 async function requestToken () {
