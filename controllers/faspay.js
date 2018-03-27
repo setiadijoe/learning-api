@@ -1,6 +1,5 @@
 const Boom = require('boom')
 const moment = require('moment')
-const signatureUtils = require('../utils/signature')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const vaService = require('../services/virtualAccount')
 const { updatePayment, insertPaymentTransaction } = require('../services/payment')
@@ -17,146 +16,102 @@ module.exports.inquiry = async (request, h) => {
     cust_name: null,
     response_code: FASPAY_RESPONSE_CODE.Gagal
   }
-  const user = await vaService.virtualAccountDetail(request.params.virtualAccount)
-  if (user) {
-    if (signatureUtils.checkSignature(request.params.signature, user.virtual_account_id)) {
-      try {
-        const amount = await inquiry.getTransactionAmount(user)
-        response.va_number = user.virtual_account_id
-        response.amount = Math.ceil(amount)
-        response.cust_name = user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`
-        response.response_code = FASPAY_RESPONSE_CODE.Sukses
-        return response
-      } catch (e) {
-        console.log(e)
-        return response
-      }
+  const account = await vaService.virtualAccountDetail(request.params.virtualAccount)
+  if (!account) return response
+
+  if (request.query.type === 'inquiry') {
+    try {
+      const amount = await inquiry.getTransactionAmount(account)
+      Object.assign(response, {
+        va_number: account.virtual_account_id,
+        amount: Math.ceil(amount), // ceiling the amount because faspay will ignore the decimal value.
+        cust_name: account.fullName,
+        response_code: FASPAY_RESPONSE_CODE.Sukses })
+      return response
+    } catch (e) {
+      console.error(e)
+      return response
     }
   }
-  return response
-}
-
-module.exports.payment = async (request, h) => {
-  const user = await vaService.virtualAccountDetail(request.params.virtualAccount)
-  if (user) {
-    let recordPayment = {
-      virtual_account: user.virtual_account_id,
+  if (request.query.type === 'payment') {
+    const recordPayment = {
+      virtual_account: account.virtual_account_id,
       transaction_id: request.query.trx_uid,
       amount: request.query.amount,
       status: 'pending'
     }
     try {
       const recorded = await paymentService.insertPayment(recordPayment)
-      return {
-        response: 'VA Static Response',
+      return Object.assign(response, {
         va_number: recorded.virtual_account,
         amount: recorded.amount,
-        cust_name: user.last_name === null ? `${user.first_name}` : `${user.first_name} ${user.last_name}`,
+        cust_name: account.fullName,
         response_code: FASPAY_RESPONSE_CODE.Sukses
-      }
+      })
     } catch (e) {
-      return Boom.badData('Duplicate Transaction Id')
-    }
-  } else {
-    return {
-      response: 'VA Static Response',
-      va_number: null,
-      amount: null,
-      cust_name: null,
-      response_code: FASPAY_RESPONSE_CODE.Gagal
+      console.error(e)
+      return Boom.badData('Something wrong has happened! Please try again or contact us!')
     }
   }
 }
 
 module.exports.paymentNotif = async (r, h) => {
-  const { request, trx_id, merchant_id, bill_no, payment_date, amount, payment_status_code, payment_status_desc, signature } = r.payload
-  const updateObject = {
+  const { request, trx_id, merchant_id, bill_no, payment_date, amount, payment_status_code, payment_status_desc } = r.payload
+  const responseObject = {
+    response: request,
     merchant_id,
     bill_no,
     amount,
-    status_code: payment_status_code,
-    status_desc: payment_status_desc,
-    transaction_date: moment(payment_date).utcOffset('-0700').format('YYYY-MM-DD HH:mm:ss')
+    status_code: FASPAY_RESPONSE_CODE.Sukses,
+    status_desc: 'Sukses',
+    transaction_date: moment()
   }
 
-  if (signatureUtils.checkSignature(signature, `${bill_no}${payment_status_code}`)) {
-    try {
-      const payment = await updatePayment(trx_id, updateObject)
-      if (payment.status_code === '2') {
-        const vaDetail = await vaService.virtualAccountDetail(payment.virtual_account)
-        const payload = {
-          amount: payment.amount
-        }
-
-        let paymentResult = null
-        try {
-          paymentResult = await paymentToAdminService(vaDetail, payload)
-        } catch (e) {
-          console.log('error when sending to admin service, please check to admin-service!!')
-          paymentResult = { status: 500 }
-        }
-
-        const status_code = paymentResult.status === 200 ? 'success' : 'failed'
-        await insertPaymentTransaction(payment.id, status_code)
-        const slackPayload = {
-          virtual_account_id: payment.virtual_account,
-          amount: payment.amount,
-          status: status_code,
-          bank_name: vaDetail.bank_code.toUpperCase(),
-          date: moment()
-        }
-
-        let channelName = '#faspay-topup'
-        if (vaDetail.loan_id) {
-          Object.assign(slackPayload, { loan_id: vaDetail.loan_id })
-          channelName = '#faspay-repayment'
-        }
-        if (vaDetail.lender_account_id) {
-          Object.assign(slackPayload, { name: vaDetail.first_name })
-        }
-        notifyToSlack(slackPayload, channelName)
-        return {
-          response: request,
-          trx_id,
-          merchant_id,
-          bill_no,
-          response_code: FASPAY_RESPONSE_CODE.Sukses,
-          response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-          response_date: moment()
-        }
-      } else {
-        return {
-          response: request,
-          trx_id,
-          merchant_id,
-          bill_no,
-          response_code: FASPAY_RESPONSE_CODE.Sukses,
-          response_desc: Object.keys(FASPAY_RESPONSE_CODE)[0],
-          response_date: moment()
-        }
-      }
-    } catch (e) {
-      console.log(e)
-      return {
-        response: request,
-        trx_id,
-        merchant_id,
-        bill_no,
-        response_code: FASPAY_RESPONSE_CODE.Gagal,
-        response_desc: Object.keys(FASPAY_RESPONSE_CODE)[1],
-        response_date: moment()
-      }
-    }
-  } else {
-    console.log('Your Signature is not valid!!')
-    return {
-      response: request,
-      trx_id,
+  try {
+    const payment = await updatePayment(trx_id, {
       merchant_id,
       bill_no,
-      response_code: FASPAY_RESPONSE_CODE.Gagal,
-      response_desc: Object.keys(FASPAY_RESPONSE_CODE)[1],
-      response_date: moment()
+      amount,
+      status_code: payment_status_code,
+      status_desc: payment_status_desc,
+      transaction_date: moment(payment_date).utcOffset('-0700').format('YYYY-MM-DD HH:mm:ss') // faspay payment date is in UTC+7 timezone while admin service is using UTC
+    })
+
+    if (payment.status_code === '2') { // Check Faspay Documentation
+      const vaDetail = await vaService.virtualAccountDetail(payment.virtual_account)
+      const payload = {
+        amount: payment.amount
+      }
+
+      let status = 'failed'
+      try {
+        await paymentToAdminService(vaDetail, payload)
+        status = 'success'
+      } catch (e) {
+        console.error('Error in admin service')
+        console.error(e)
+      }
+      await insertPaymentTransaction(payment.id, status)
+      const slackPayload = {
+        virtual_account_id: payment.virtual_account,
+        amount: payment.amount,
+        status,
+        bank_name: vaDetail.bank_code.toUpperCase(),
+        date: moment()
+      }
+
+      if (vaDetail.loan_id) {
+        notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-topup')
+      } else if (vaDetail.lender_account_id) {
+        notifyToSlack(Object.assign(slackPayload, { name: vaDetail.fullName }), '#faspay-repayment')
+      }
     }
+    return responseObject
+  } catch (e) {
+    console.log(e)
+    return Object.assign(responseObject, {
+      response_code: FASPAY_RESPONSE_CODE.Gagal,
+      response_desc: 'Gagal'
+    })
   }
 }

@@ -9,6 +9,12 @@ module.exports = function (sequelize, DataTypes) {
     last_name: DataTypes.STRING,
     bank_code: DataTypes.STRING,
     virtual_account_id: DataTypes.STRING
-  }, {})
+  }, {
+    getterMethods: {
+      fullName () {
+        return `${this.first_name} ${this.last_name || ''}`.trim()
+      }
+    }
+  })
   return VirtualAccount
 }

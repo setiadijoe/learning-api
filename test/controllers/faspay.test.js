@@ -46,6 +46,9 @@ describe('Inquiry and Payment request', () => {
       params: {
         virtualAccount: dummyVa,
         signature: '987654321'
+      },
+      query: {
+        type: 'inquiry'
       }
     }
 
@@ -75,12 +78,13 @@ describe('Inquiry and Payment request', () => {
         virtualAccount: dummyVa
       },
       query: {
+        type: 'payment',
         trx_uid: 'unique_trx_id',
         amount: '10000000'
       }
     }
 
-    const res = await faspayController.payment(request)
+    const res = await faspayController.inquiry(request)
     expect(res.va_number).toEqual(dummyUser.virtual_account_id)
     expect(res.response_code).toEqual('00')
     done()

@@ -95,4 +95,7 @@ pm2 start app,js
 - Check your running api, type `pm2 list` and see your running api. It should **online**
 - To check the log, type `pm2 logs <id>`
 
-Then you check your api in postman or browser
+Then you check your api in postman or 
+
+##DOCUMENTATION FASPAY
+![Faspay Documentation](https://faspay.co.id/docs/#request-parameter-inquiry-payment-notification)
