@@ -111,6 +111,9 @@ module.exports.paymentNotif = async (r, h) => {
           Object.assign(slackPayload, { loan_id: vaDetail.loan_id })
           channelName = '#faspay-repayment'
         }
+        if (vaDetail.lender_account_id) {
+          Object.assign(slackPayload, { name: vaDetail.first_name })
+        }
         notifyToSlack(slackPayload, channelName)
         return {
           response: request,
