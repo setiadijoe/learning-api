@@ -1,5 +1,5 @@
 const Boom = require('boom')
-const moment = require('moment')
+const moment = require('moment-timezone')
 const { FASPAY_RESPONSE_CODE } = require('../helpers/constant')
 const vaService = require('../services/virtualAccount')
 const { updatePayment, insertPaymentTransaction } = require('../services/payment')
@@ -64,7 +64,7 @@ module.exports.paymentNotif = async (r, h) => {
     amount,
     status_code: FASPAY_RESPONSE_CODE.Sukses,
     status_desc: 'Sukses',
-    transaction_date: moment()
+    transaction_date: moment().tz('Asia/Jakarta')
   }
 
   try {
@@ -74,7 +74,7 @@ module.exports.paymentNotif = async (r, h) => {
       amount,
       status_code: payment_status_code,
       status_desc: payment_status_desc,
-      transaction_date: moment(payment_date).utcOffset('-0700').format('YYYY-MM-DD HH:mm:ss') // faspay payment date is in UTC+7 timezone while admin service is using UTC
+      transaction_date: moment(payment_date).tz('Asia/Jakarta') // faspay payment date is in UTC+7 timezone while admin service is using UTC
     })
 
     if (payment.status_code === '2') { // Check Faspay Documentation
@@ -97,7 +97,7 @@ module.exports.paymentNotif = async (r, h) => {
         amount: payment.amount,
         status,
         bank_name: vaDetail.bank_code.toUpperCase(),
-        date: moment()
+        date: moment().tz('Asia/Jakarta')
       }
 
       if (vaDetail.loan_id) {
