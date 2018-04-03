@@ -15,13 +15,13 @@ module.exports.generateVa = (request, h) => {
 
   return services.create(virtualAccounts)
     .then((vaAccounts) => {
-      const newVaAccounts = vaAccounts.map((va) => va.get({ plain: true }))
-      newVaAccounts.map((va) => {
-        delete va.id
-        delete va.createdAt
-        delete va.updatedAt
+      return vaAccounts.map(account => {
+        return {
+          fullName: account.fullName,
+          bank_code: account.bank_code,
+          virtual_account_id: account.virtual_account_id
+        }
       })
-      return newVaAccounts
     })
     .catch((err) => {
       console.log(err)
