@@ -21,3 +21,7 @@ module.exports.vaDetail = (accountId, loanId, lenderAccountId) => {
     where: whereQuery
   })
 }
+
+module.exports.createNew = (va) => {
+  return Model.VirtualAccount.create(va)
+}

@@ -2,6 +2,22 @@ const Boom = require('boom')
 const services = require('./../services/virtualAccount')
 const util = require('./../utils/virtualAccount')
 
+const withRetry = (fn, retry, retryInterval) => {
+  retryInterval = retryInterval || 1000
+  return fn()
+    .catch((e) => {
+      if (retry === 0) {
+        return Promise.reject(e)
+      }
+      console.log(`retry counter ${retry}`)
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(withRetry(fn, retry - 1, retryInterval))
+        }, retryInterval)
+      })
+    })
+}
+
 module.exports.generateVa = (request, h) => {
   const { accountId, accountSource, phoneNumber, firstName, lastName, loanId, lenderAccountId } = request.payload
 
@@ -15,26 +31,25 @@ module.exports.generateVa = (request, h) => {
 
   return services.vaDetail(accountId)
     .then((vaDetail) => {
-      if (vaDetail.length === 0) {
-        return services.create(virtualAccounts)
-          .then((vaAccounts) => {
-            return vaAccounts.map(account => {
-              return {
-                fullName: account.fullName,
-                bank_code: account.bank_code,
-                virtual_account_id: account.virtual_account_id
-              }
-            })
-          })
-      } else {
+      if (vaDetail && vaDetail.length) {
         return vaDetail.map(account => {
           return {
             fullName: account.fullName,
-            bank_code: account.bank_code,
-            virtual_account_id: account.virtual_account_id
+            bankCode: account.bank_code,
+            virtualAccountId: account.virtual_account_id
           }
         })
       }
+      return withRetry(services.create.bind(null, virtualAccounts), 5)
+        .then(vaAccounts => {
+          return vaAccounts.map(account => {
+            return {
+              fullName: account.fullName,
+              bankCode: account.bank_code,
+              virtualAccountId: account.virtual_account_id
+            }
+          })
+        })
     })
     .catch((err) => {
       console.log(err)
