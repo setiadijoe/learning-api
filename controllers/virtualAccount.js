@@ -15,7 +15,7 @@ module.exports.generateVa = (request, h) => {
 
   return services.vaDetail(accountId)
     .then((vaDetail) => {
-      if (!vaDetail) {
+      if (vaDetail.length === 0) {
         return services.create(virtualAccounts)
           .then((vaAccounts) => {
             return vaAccounts.map(account => {
