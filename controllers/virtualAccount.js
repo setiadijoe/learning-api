@@ -13,15 +13,28 @@ module.exports.generateVa = (request, h) => {
     virtualAccount.lender_account_id = lenderAccountId
   })
 
-  return services.create(virtualAccounts)
-    .then((vaAccounts) => {
-      return vaAccounts.map(account => {
-        return {
-          fullName: account.fullName,
-          bank_code: account.bank_code,
-          virtual_account_id: account.virtual_account_id
-        }
-      })
+  return services.vaDetail(accountId)
+    .then((vaDetail) => {
+      if (!vaDetail) {
+        return services.create(virtualAccounts)
+          .then((vaAccounts) => {
+            return vaAccounts.map(account => {
+              return {
+                fullName: account.fullName,
+                bank_code: account.bank_code,
+                virtual_account_id: account.virtual_account_id
+              }
+            })
+          })
+      } else {
+        return vaDetail.map(account => {
+          return {
+            fullName: account.fullName,
+            bank_code: account.bank_code,
+            virtual_account_id: account.virtual_account_id
+          }
+        })
+      }
     })
     .catch((err) => {
       console.log(err)
