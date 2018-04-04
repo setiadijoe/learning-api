@@ -6,6 +6,9 @@ const bankPrefix = {
 }
 
 module.exports.generateVa = (accountId, accountSource, phoneNumber) => {
+  if (!accountId || !accountSource || !phoneNumber) {
+    throw new Error()
+  }
   let virtualAccounts = []
   const additionalVa = Math.random().toString().slice(2, 12)
   Object.keys(bankPrefix).forEach(bank => {
