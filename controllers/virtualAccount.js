@@ -19,9 +19,9 @@ const withRetry = (fn, retry, retryInterval) => {
 }
 
 module.exports.generateVa = (request, h) => {
-  const { accountId, accountSource, phoneNumber, firstName, lastName, loanId, lenderAccountId } = request.payload
+  const { accountId, accountSource, firstName, lastName, loanId, lenderAccountId } = request.payload
 
-  const virtualAccounts = util.generateVa(accountId, accountSource, phoneNumber)
+  const virtualAccounts = util.generateVa(accountId, accountSource)
   virtualAccounts.map(virtualAccount => {
     virtualAccount.first_name = firstName
     virtualAccount.last_name = lastName

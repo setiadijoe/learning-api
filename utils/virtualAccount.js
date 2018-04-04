@@ -5,8 +5,8 @@ const bankPrefix = {
   'bca': process.env.PREFIX_BCA
 }
 
-module.exports.generateVa = (accountId, accountSource, phoneNumber) => {
-  if (!accountId || !accountSource || !phoneNumber) {
+module.exports.generateVa = (accountId, accountSource) => {
+  if (!accountId || !accountSource) {
     throw new Error()
   }
   let virtualAccounts = []
