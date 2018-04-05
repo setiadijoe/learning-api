@@ -5,7 +5,7 @@ const bankPrefix = {
   'bca': process.env.PREFIX_BCA
 }
 
-module.exports.generateVa = (accountId, accountSource) => {
+const generateVa = (accountId, accountSource) => {
   if (!accountId || !accountSource) {
     throw new Error()
   }
@@ -42,4 +42,7 @@ const withRetry = (fn, retry, retryInterval) => {
     })
 }
 
-module.exports = withRetry
+module.exports = {
+  withRetry,
+  generateVa
+}
