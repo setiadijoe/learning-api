@@ -101,9 +101,9 @@ module.exports.paymentNotif = async (r, h) => {
       }
 
       if (vaDetail.loan_id) {
-        notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-topup')
+        notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
       } else if (vaDetail.lender_account_id) {
-        notifyToSlack(Object.assign(slackPayload, { name: vaDetail.fullName }), '#faspay-repayment')
+        notifyToSlack(Object.assign(slackPayload, { name: vaDetail.fullName }), '#faspay-topup')
       }
     }
     return responseObject

@@ -2,22 +2,6 @@ const Boom = require('boom')
 const services = require('./../services/virtualAccount')
 const util = require('./../utils/virtualAccount')
 
-const withRetry = (fn, retry, retryInterval) => {
-  retryInterval = retryInterval || 1000
-  return fn()
-    .catch((e) => {
-      if (retry === 0) {
-        return Promise.reject(e)
-      }
-      console.log(`retry counter ${retry}`)
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(withRetry(fn, retry - 1, retryInterval))
-        }, retryInterval)
-      })
-    })
-}
-
 module.exports.generateVa = (request, h) => {
   const { accountId, accountSource, firstName, lastName, loanId, lenderAccountId } = request.payload
 
@@ -40,7 +24,7 @@ module.exports.generateVa = (request, h) => {
           }
         })
       }
-      return withRetry(services.create.bind(null, virtualAccounts), 5)
+      return util.withRetry(services.create.bind(null, virtualAccounts), 5)
         .then(vaAccounts => {
           return vaAccounts.map(account => {
             return {

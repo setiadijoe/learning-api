@@ -25,3 +25,21 @@ module.exports.generateVa = (accountId, accountSource) => {
 
   return virtualAccounts
 }
+
+const withRetry = (fn, retry, retryInterval) => {
+  retryInterval = retryInterval || 1000
+  return fn()
+    .catch((e) => {
+      if (retry === 0) {
+        return Promise.reject(e)
+      }
+      console.log(`retry counter ${retry}`)
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(withRetry(fn, retry - 1, retryInterval))
+        }, retryInterval)
+      })
+    })
+}
+
+module.exports = withRetry
