@@ -8,7 +8,8 @@ module.exports = function (sequelize, DataTypes) {
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     bank_code: DataTypes.STRING,
-    virtual_account_id: DataTypes.STRING
+    virtual_account_id: DataTypes.STRING,
+    email: DataTypes.STRING
   }, {
     getterMethods: {
       fullName () {

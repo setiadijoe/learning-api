@@ -19,7 +19,7 @@ module.exports.generateVa = (request, h) => {
         return vaDetail.map(account => {
           return {
             fullName: account.fullName,
-            bankCode: account.bank_code,
+            bankCode: account.bank_code.toUpperCase(),
             virtualAccountId: account.virtual_account_id
           }
         })
@@ -29,7 +29,7 @@ module.exports.generateVa = (request, h) => {
           return vaAccounts.map(account => {
             return {
               fullName: account.fullName,
-              bankCode: account.bank_code,
+              bankCode: account.bank_code.toUpperCase(),
               virtualAccountId: account.virtual_account_id
             }
           })
@@ -50,6 +50,7 @@ module.exports.getVirtualAccountDetail = async (request, h) => {
     const virtualAccounts = await services.vaDetail(accountId, loanId, lenderAccountId)
     return virtualAccounts.map((va) => ({
       accountId: va.account_id,
+      fullName: va.fullName,
       virtualAccountId: va.virtual_account_id,
       bankCode: va.bank_code.toUpperCase()
     }))
