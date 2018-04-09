@@ -7,6 +7,7 @@ const paymentService = require('./../services/payment')
 const { paymentToAdminService } = require('../services/fetchAPI')
 const inquiry = require('../services/inquiry')
 const { notifyToSlack } = require('../services/notification')
+const { sendEmailUsingVirtualAccount } = require('./sendEmail')
 
 module.exports.inquiry = async (request, h) => {
   console.log('Step one')
@@ -101,10 +102,11 @@ module.exports.paymentNotif = async (r, h) => {
         date: moment().tz('Asia/Jakarta')
       }
 
+      status === 'success' && sendEmailUsingVirtualAccount(payment)
       if (vaDetail.loan_id) {
-        notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-topup')
+        notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
       } else if (vaDetail.lender_account_id) {
-        notifyToSlack(Object.assign(slackPayload, { name: vaDetail.fullName }), '#faspay-repayment')
+        notifyToSlack(Object.assign(slackPayload, { name: vaDetail.fullName }), '#faspay-topup')
       }
     }
     return responseObject
