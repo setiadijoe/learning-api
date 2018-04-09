@@ -9,7 +9,6 @@ const inquiry = require('../services/inquiry')
 const { notifyToSlack } = require('../services/notification')
 
 module.exports.inquiry = async (request, h) => {
-  console.log('Step one')
   let response = {
     response: 'VA Static Response',
     va_number: null,
@@ -18,7 +17,7 @@ module.exports.inquiry = async (request, h) => {
     response_code: FASPAY_RESPONSE_CODE.Gagal
   }
   const account = await vaService.virtualAccountDetail(request.params.virtualAccount)
-  if (!account) return response
+  console.log(account)
 
   if (request.query.type === 'inquiry') {
     try {
