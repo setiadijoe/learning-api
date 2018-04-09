@@ -9,7 +9,7 @@ const getIdNotHaveVA = (arrayId) => ({
   name: 'Id-not-have-VA',
   text: `
   SELECT
-  "A".id, "A".source, "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber", "SourceAccount".loan_id, "SourceAccount".id as source_id
+  "A".id, "A".source, "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber", "SourceAccount".loan_id, "SourceAccount".id as source_id, "SourceAccount".username as email
 FROM
   "Accounts" as "A"
 INNER JOIN
@@ -85,7 +85,7 @@ const migrateVa = async () => {
     .then((accounts) => {
       console.log('VA THAT WILL BE CREATED', accounts.length)
       return accounts.map(account => {
-        const accountVa = generateVa(account.id, account.source, account.phoneNumber)
+        const accountVa = generateVa(account.id, account.source)
         return accountVa.map(va => {
           va.first_name = account.firstName
           va.last_name = account.lastName

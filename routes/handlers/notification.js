@@ -1,8 +1,12 @@
 require('dotenv').config()
 const Joi = require('joi')
 const { paymentNotif } = require('../../controllers/faspay')
+const preHandler = require('../pre-handler/notification')
 
 module.exports.pushPaymentNotif = {
+  pre: [
+    { method: preHandler.checkSignature }
+  ],
   handler: paymentNotif,
   validate: {
     payload: {

@@ -6,7 +6,7 @@ const getAllLoanDetail = () => ({
   name: 'get-account-detail',
   text: `
  SELECT
-   "A".id, "A".source, "A".source_id, "LA"."loan_id", "UD"."firstName",  "UD"."lastName", "UD"."phoneNumber"
+   "A".id, "A".source, "A".source_id, "LA"."loan_id", "UD"."firstName",  "UD"."lastName", "UD"."phoneNumber", "U"."username" as "email"
  FROM
    "Accounts" as "A"
  INNER JOIN
@@ -51,16 +51,18 @@ const migrateLoan = async () => {
   getLoanDetail()
     .then((accounts) => {
       return accounts.map(account => {
-        const accountVa = generateVa(account.id, account.source, account.phoneNumber)
+        const accountVa = generateVa(account.id, account.source)
         return accountVa.map(va => {
           va.first_name = account.firstName
           va.last_name = account.lastName
           va.loan_id = account.loan_id
+          va.email = account.email
           return va
         })
       })
     })
     .then(async (virtualAccounts) => {
+      console.log('save in database')
       await asyncForEach(virtualAccounts, async (vaAccount) => {
         const createdVa = await create(vaAccount)
         return createdVa

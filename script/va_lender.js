@@ -6,7 +6,7 @@ const getAllLenderDetail = () => ({
   name: 'get-lender-account',
   text: `
     SELECT
-      "A".id, "A".source, "A".source_id, "LA".id AS "lender_account_id", "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber"
+      "A".id, "A".source, "A".source_id, "LA".id AS "lender_account_id", "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber", "User"."username" as "email"
     FROM
       "Accounts" "A"
     INNER JOIN
@@ -47,11 +47,12 @@ const migrateLender = async () => {
   getLenderDetail()
     .then(lenders => {
       return lenders.map(lender => {
-        const lenderVa = generateVa(lender.id, lender.source, lender.phoneNumber)
+        const lenderVa = generateVa(lender.id, lender.source)
         return lenderVa.map(va => {
           va.first_name = lender.firstName
           va.last_name = lender.lastName
           va.lender_account_id = lender.lender_account_id
+          va.email = lender.email
           return va
         })
       })
