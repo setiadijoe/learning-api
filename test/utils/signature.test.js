@@ -17,7 +17,7 @@ test('first paramater of hashSignature must be string alphanumeric', (done) => {
 })
 
 test('function checkSignature should return true', (done) => {
-  const signature = '0c51de36ec726a79af61d3ea4da38d42a7910dd2'
+  const signature = 'a4ffcc95b149269f4cca3285e8e1b8b7ba782c8b'
   const virtualAccount = '1010952511556130'
   expect(checkSignature(signature, virtualAccount)).toBeTruthy()
   done()
