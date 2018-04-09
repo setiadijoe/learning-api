@@ -62,6 +62,7 @@ const migrateLoan = async () => {
       })
     })
     .then(async (virtualAccounts) => {
+      console.log('save in database')
       await asyncForEach(virtualAccounts, async (vaAccount) => {
         const createdVa = await create(vaAccount)
         return createdVa
