@@ -103,11 +103,11 @@ module.exports.paymentNotif = async (r, h) => {
 
       if (status === 'success') {
         await sendEmailUsingVirtualAccount(payment)
-        if (vaDetail.loan_id) {
-          notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
-        } else if (vaDetail.lender_account_id) {
-          notifyToSlack(Object.assign(slackPayload, { name: vaDetail.fullName }), '#faspay-topup')
-        }
+      }
+      if (vaDetail.loan_id) {
+        notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
+      } else if (vaDetail.lender_account_id) {
+        notifyToSlack(Object.assign(slackPayload, { name: vaDetail.fullName }), '#faspay-topup')
       }
     }
     return responseObject

@@ -20,8 +20,8 @@ module.exports.sendEmailUsingVirtualAccount = (payment) => {
         from: 'customer@taralite.com',
         fromName: 'Taralite Admin',
         subject: 'Taralite: Notifikasi Pembayaran Invoice',
-        msgTo: process.env.NODE_ENV === 'production' ? [ process.env.NOTIFICATION_EMAIL ] : [ vaDetail.email ],
-        msgBcc: process.env.NODE_ENV === 'production' ? null : [ 'admin@taralite.com' ],
+        msgTo: process.env.NODE_ENV === 'production' ? [ vaDetail.email ] : [ process.env.NOTIFICATION_EMAIL ],
+        msgBcc: process.env.NODE_ENV === 'production' ? [ 'admin@taralite.com' ] : null,
         bodyHtml: body.replace(/\n/g, '<br>'),
         textHtml: body
       })
