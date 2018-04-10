@@ -9,38 +9,7 @@ const getIdNotHaveVA = (arrayId) => ({
   name: 'Id-not-have-VA',
   text: `
   SELECT
-<<<<<<< HEAD
   "A".id, "A".source, "A".balance, "SourceAccount".type, "SourceAccount".id, "SourceAccount".loan_id, "SourceAccount".user_id, "SourceAccount".email, "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber"
-=======
-  "A".id, "A".source, "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber", "SourceAccount".loan_id, "SourceAccount".id as source_id, "SourceAccount".username as email
-FROM
-  "Accounts" as "A"
-INNER JOIN
-(
-  SELECT
-    'LoanAccount' AS type, "LoanA".id, loan_id, "U".id AS "user_id"
-  FROM
-    "LoanAccounts" "LoanA"
-  INNER JOIN
-    "Loans" "L"
-  ON
-    "L".id = "LoanA".loan_id
-  INNER JOIN
-    "LoanProposals" "LP"
-  ON
-    "LP".id = "L".proposal_id
-  INNER JOIN
-    "BorrowerEntities" "BE"
-  ON
-    "BE".id = "LP".borrower_entity_id
-  INNER JOIN
-    "User" "U"
-  ON
-    "U".id = "BE".user_id
-  UNION
-  SELECT
-    'LenderAccount' as type, "LenderA".id, NULL AS loan_id, "LenderA".user_id
->>>>>>> ca5243ff90212868645b66c9e278eb11ab14f0f5
   FROM
    "Accounts" "A"
   INNER JOIN (
