@@ -9,54 +9,39 @@ const getIdNotHaveVA = (arrayId) => ({
   name: 'Id-not-have-VA',
   text: `
   SELECT
-  "A".id, "A".source, "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber", "SourceAccount".loan_id, "SourceAccount".id as source_id, "SourceAccount".username as email
-FROM
-  "Accounts" as "A"
-INNER JOIN
-(
-  SELECT
-    'LoanAccount' AS type, "LoanA".id, loan_id, "U".id AS "user_id"
+  "A".id, "A".source, "A".balance, "SourceAccount".type, "SourceAccount".id, "SourceAccount".loan_id, "SourceAccount".user_id, "SourceAccount".email, "Detail"."firstName", "Detail"."lastName", "Detail"."phoneNumber"
   FROM
-    "LoanAccounts" "LoanA"
-  INNER JOIN
-    "Loans" "L"
+   "Accounts" "A"
+  INNER JOIN (
+    SELECT 'LoanAccount' AS type, "LoanA".id, loan_id, "U".id AS "user_id", "U".username AS email
+    FROM "LoanAccounts" "LoanA"
+    INNER JOIN "Loans" "L"
+    ON "L".id = "LoanA".loan_id
+    INNER JOIN "LoanProposals" "LP"
+    ON "LP".id = "L".proposal_id
+    INNER JOIN "BorrowerEntities" "BE"
+    ON "BE".id = "LP".borrower_entity_id
+    INNER JOIN "User" "U"
+    ON "U".id = "BE".user_id
+    UNION SELECT 'LenderAccount' as type, "LenderA".id, NULL AS loan_id, "LenderA".user_id, "U".username AS email
+    FROM "LenderAccounts" "LenderA"
+    INNER JOIN "User" "U"
+    ON "U".id = "LenderA".user_id
+  ) "SourceAccount"
+  
+  ON ("A".source_id = "SourceAccount".id and "SourceAccount".type = "A".source)
+  INNER JOIN (
+    SELECT
+      "userId", 'individual'::varchar AS userType, "firstName", "lastName", "phoneNumber"
+    FROM
+      "UserDetailIndividual"
+    UNION SELECT
+      "userId", 'institutional'::varchar AS userType, "companyName" AS "firstName", NULL as "lastName", "phoneNumber"
+    FROM
+    "UserDetailInstitutionals"
+  ) "Detail"
   ON
-    "L".id = "LoanA".loan_id
-  INNER JOIN
-    "LoanProposals" "LP"
-  ON
-    "LP".id = "L".proposal_id
-  INNER JOIN
-    "BorrowerEntities" "BE"
-  ON
-    "BE".id = "LP".borrower_entity_id
-  INNER JOIN
-    "User" "U"
-  ON
-    "U".id = "BE".user_id
-  UNION
-  SELECT
-    'LenderAccount' as type, "LenderA".id, NULL AS loan_id, "LenderA".user_id
-  FROM
-    "LenderAccounts" "LenderA"
-  INNER JOIN
-    "User" "U"
-  ON
-  "U".id = "LenderA".user_id
-) "SourceAccount"
-ON ("A".source_id = "SourceAccount".id and "SourceAccount".type = "A".source)
-INNER JOIN (
-  SELECT
-    "userId", 'individual'::varchar AS userType, "firstName", "lastName", "phoneNumber"
-  FROM
-    "UserDetailIndividual"
-  UNION SELECT
-    "userId", 'institutional'::varchar AS userType, "companyName" AS "firstName", NULL as "lastName", "phoneNumber"
-  FROM
-  "UserDetailInstitutionals"
-) "Detail"
-ON
-  "SourceAccount".user_id = "Detail"."userId"
+    "SourceAccount".user_id = "Detail"."userId"
     WHERE NOT
       "A".id = ANY($1::int[])
   `,
