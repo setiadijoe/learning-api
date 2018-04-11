@@ -108,6 +108,6 @@ const migrateVa = async () => {
     .catch(err => console.log(err))
 }
 
-const job = schedule.scheduleJob('*/4 * * * * *', function () { // eslint-disable-line no-unused-vars
+const job = schedule.scheduleJob('* */30 * * * *', function () { // eslint-disable-line no-unused-vars
   migrateVa()
 })
