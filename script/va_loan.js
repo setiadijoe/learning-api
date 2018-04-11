@@ -6,7 +6,7 @@ const getAllLoanDetail = () => ({
   name: 'get-account-detail',
   text: `
  SELECT
-   "A".id, "A".source, "A".source_id, "LA"."loan_id", "UD"."firstName",  "UD"."lastName", "UD"."phoneNumber", "U"."username" as "email"
+   "A".id, "A".source, "A".source_id, "LA"."loan_id", "Detail"."firstName",  "Detail"."lastName", "Detail"."phoneNumber", "U"."username" as "email"
  FROM
    "Accounts" as "A"
  INNER JOIN
@@ -29,10 +29,18 @@ const getAllLoanDetail = () => ({
    "User" as "U"
  ON
    "U".id = "BE".user_id
- INNER JOIN
-   "UserDetailIndividual" as "UD"
+   INNER JOIN (
+    SELECT
+      "userId", 'individual'::varchar AS userType, "firstName", "lastName", "phoneNumber"
+    FROM
+      "UserDetailIndividual"
+    UNION SELECT
+      "userId", 'institutional'::varchar AS userType, "companyName" AS "firstName", NULL as "lastName", "phoneNumber"
+    FROM
+    "UserDetailInstitutionals"
+  ) "Detail"
  ON
-   "UD"."userId" = "U".id
+   "Detail"."userId" = "U".id
  `
 })
 
