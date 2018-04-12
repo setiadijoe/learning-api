@@ -21,3 +21,7 @@ module.exports.vaDetail = (accountId, loanId, lenderAccountId) => {
     where: whereQuery
   })
 }
+
+module.exports.getAllVirtualAccountDetail = () => {
+  return Model.VirtualAccount.findAll()
+}
