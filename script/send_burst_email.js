@@ -1,4 +1,6 @@
 require('dotenv').config()
+const fs = require('fs')
+const path = require('path')
 
 const ElasticMail = require('nodelastic')
 const services = require('../services/virtualAccount')
@@ -31,42 +33,31 @@ const sendBurstEmail = () => {
 
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
       return virtual_accounts.map(va_detail => {
-        const body = body_text
-          .replace(/{{fullName}}/g, va_detail.fullName.toUpperCase())
-          .replace(/{{codeBank1}}/g, va_detail.bank_code[0].toUpperCase())
-          .replace(/{{vaCode1}}/g, va_detail.virtual_account_id[0])
-          .replace(/{{codeBank2}}/g, va_detail.bank_code[1].toUpperCase())
-          .replace(/{{vaCode2}}/g, va_detail.virtual_account_id[1])
+        const body = fs.readFileSync('./Petriq.html', 'UTF-8')
+        const body_text = body.replace(/{{FNAME}}/g, va_detail.fullName.toUpperCase())
 
         return client.send({
           from: 'customer@taralite.com',
           fromName: 'Taralite Admin',
           subject: 'Taralite: Notification For New Virtual Account',
-          msgTo: process.env.NODE_ENV === 'production' ? [ va_detail.email ] : [ process.env.NOTIFICATION_EMAIL ],
+          msgTo: process.env.NODE_ENV === 'production' ? [ va_detail.email ] : process.env.NOTIFICATION_EMAIL.split(' '),
           msgBcc: process.env.NODE_ENV === 'production' ? [ 'admin@taralite.com' ] : null,
-          bodyHtml: body.replace(/\n/g, '<br>'),
-          textHtml: body
-        })
+          bodyHtml: body_text.replace(/\n/g, '<br>'),
+          textHtml: body_text
+        }, attachments)
       })
     })
 }
 
-const body_text = `Kepada {{fullName}},
-
-Berikut ini kami informasikan mengenai nomor virtual account yang digunakan untuk melakukan transaksi
-
-Nama Bank: {{codeBank1}}
-Nomor Virtual Account: {{vaCode1}}
-
-Nama Bank: {{codeBank2}}
-Nomor Virtual Account: {{vaCode2}}
-
-Demikianlah informasi yang kami berikan. Jika ada yang kurang jelas harap segera hubungi kami
-
-Terima kasih
-
-Phone  : 0811-8181-020
-Office : 021-292-00-955
-Email  : customer@taralite.com`
+const attachments = [
+  'Tata Cara Pembayaran BCA VA.pdf',
+  'Tata Cara Pembayaran Permata VA.pdf'
+].map(attachment => {
+  return {
+    data: fs.readFileSync(path.resolve(`./attachments/${attachment}`)),
+    filename: attachment,
+    contentType: 'application/pdf'
+  }
+})
 
 sendBurstEmail()
