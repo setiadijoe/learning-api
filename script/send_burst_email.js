@@ -33,8 +33,10 @@ const sendBurstEmail = () => {
 
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
       return virtual_accounts.map(va_detail => {
-        const body = fs.readFileSync('./Petriq.html', 'UTF-8')
+        const body = fs.readFileSync('./TemplateNotificationEmail.html', 'UTF-8')
         const body_text = body.replace(/{{FNAME}}/g, va_detail.fullName.toUpperCase())
+          .replace(/{{VACODE1}}/g, va_detail.virtual_account_id[1])
+          .replace(/{{VACODE2}}/g, va_detail.virtual_account_id[0])
 
         return client.send({
           from: 'customer@taralite.com',
