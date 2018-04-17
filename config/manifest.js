@@ -14,9 +14,7 @@ const plugins = {
   },
   register: {
     plugins: [
-      { plugin: routes },
-      { plugin: 'hapi-auth-basic' },
-      { plugin: './plugin/basic-auth.js' }
+      { plugin: routes }
     ]
   }
 }
