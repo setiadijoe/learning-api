@@ -10,7 +10,6 @@ const { notifyToSlack } = require('../services/notification')
 const { sendEmailUsingVirtualAccount } = require('./sendEmail')
 
 module.exports.inquiry = async (request, h) => {
-  console.log('Step one')
   let response = {
     response: 'VA Static Response',
     va_number: null,
