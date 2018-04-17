@@ -36,7 +36,7 @@ module.exports.generateVa = (request, h) => {
         })
     })
     .catch((err) => {
-      console.log(err)
+      console.error(err)
       return Boom.badData(new Error(err))
     })
 }
@@ -55,7 +55,7 @@ module.exports.getVirtualAccountDetail = async (request, h) => {
       bankCode: va.bank_code.toUpperCase()
     }))
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return e
   }
 }

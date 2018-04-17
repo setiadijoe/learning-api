@@ -111,7 +111,7 @@ module.exports.paymentNotif = async (r, h) => {
     }
     return responseObject
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return Object.assign(responseObject, {
       response_code: FASPAY_RESPONSE_CODE.Gagal,
       response_desc: 'Gagal'
