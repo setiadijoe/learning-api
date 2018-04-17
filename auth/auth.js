@@ -2,8 +2,8 @@ require('dotenv').config()
 
 const bcrypt = require('bcryptjs')
 
-const usernameHash = process.env.USERNAME
-const passwordHash = process.env.PASSWORD
+const usernameHash = process.env.USERNAME_AUTH
+const passwordHash = process.env.PASSWORD_AUTH
 
 const compareUsernamePassword = async (request, username, password) => {
   if (username !== usernameHash) return {credentials: null, isValid: false}
