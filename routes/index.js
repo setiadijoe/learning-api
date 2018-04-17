@@ -9,6 +9,7 @@ const routes = {
       path: '/',
       config: {
         handler: async (request, h) => `OK!`,
+        auth: false,
         description: 'Root API',
         notes: 'return server status'
       }
