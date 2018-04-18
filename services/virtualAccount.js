@@ -23,5 +23,5 @@ module.exports.vaDetail = (accountId, loanId, lenderAccountId) => {
 }
 
 module.exports.getAllVirtualAccountDetail = () => {
-  return Model.VirtualAccount.findAll()
+  return Model.VirtualAccount.findAll({limit: 2})
 }
