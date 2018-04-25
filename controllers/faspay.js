@@ -101,7 +101,8 @@ module.exports.paymentNotif = async (r, h) => {
         date: moment().tz('Asia/Jakarta')
       }
 
-      status === 'success' && sendEmailUsingVirtualAccount(payment)
+      // TODO: use email template, ask Jati
+      // status === 'success' && sendEmailUsingVirtualAccount(payment)
       if (vaDetail.loan_id) {
         notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
       } else if (vaDetail.lender_account_id) {
