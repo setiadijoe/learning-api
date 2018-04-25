@@ -10,7 +10,6 @@ const { notifyToSlack } = require('../services/notification')
 const { sendEmailUsingVirtualAccount } = require('./sendEmail')
 
 module.exports.inquiry = async (request, h) => {
-  console.log('Step one')
   let response = {
     response: 'VA Static Response',
     va_number: null,
@@ -111,7 +110,7 @@ module.exports.paymentNotif = async (r, h) => {
     }
     return responseObject
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return Object.assign(responseObject, {
       response_code: FASPAY_RESPONSE_CODE.Gagal,
       response_desc: 'Gagal'

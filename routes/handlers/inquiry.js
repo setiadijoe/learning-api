@@ -7,6 +7,7 @@ module.exports.inquiry = {
   pre: [
     { method: preHandler.checkSignature }
   ],
+  auth: false,
   validate: {
     params: {
       virtualAccount: Joi.string().alphanum(),

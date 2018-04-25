@@ -14,7 +14,9 @@ const plugins = {
   },
   register: {
     plugins: [
-      { plugin: routes }
+      { plugin: routes },
+      { plugin: 'hapi-auth-basic' },
+      { plugin: './plugin/basic-auth' }
     ]
   }
 }
@@ -30,7 +32,7 @@ if (Environment.toLowerCase() === 'development') {
         title: 'API Documentation',
         version: AppVersion,
         contact: {
-          name: 'Rizky',
+          name: 'Yonathan',
           email: 'rizky.saputro@taralite.com'
         }
       }
