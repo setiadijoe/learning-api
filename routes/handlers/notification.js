@@ -8,6 +8,7 @@ module.exports.pushPaymentNotif = {
     { method: preHandler.checkSignature }
   ],
   handler: paymentNotif,
+  auth: false,
   validate: {
     payload: {
       request: Joi.string().required(),

@@ -7,6 +7,6 @@ module.exports.checkSignature = (r, h) => {
   if (signatureUtils.checkSignature(signature, `${bill_no}${payment_status_code}`)) {
     return true
   }
-  console.log('Your Signature is Invalid')
+  console.error('Your Signature is Invalid')
   return Boom.badRequest('Your Signature is Invalid!!')
 }
