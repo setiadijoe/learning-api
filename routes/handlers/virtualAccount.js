@@ -11,7 +11,7 @@ module.exports.generateVa = {
       lenderAccountId: Joi.number().when('accountSource', { is: 'LenderAccount', then: Joi.required(), otherwise: Joi.invalid() }),
       phoneNumber: Joi.string().required(),
       firstName: Joi.string().required(),
-      lastName: Joi.string()
+      lastName: Joi.string().allow('')
     }
   },
   description: 'Generate Virtual Account.'
