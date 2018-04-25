@@ -19,7 +19,7 @@ async function requestAmount (loanId, token) {
     headers: {
       'Authorization': `Bearer ${token}`
     }
-  }).then(({data}) => data.data.amount)
+  }).then(({data}) => data.amount)
 }
 
 async function paymentToAdminService (vaDetail, payload) {
