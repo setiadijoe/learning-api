@@ -43,7 +43,7 @@ const getVirtualAccountDetail = () => {
       return Model.sequelize.query(select_query(account_id))
     })
     .then(([va_detail]) => {
-      return va_detail.slice(0, 2)
+      return va_detail
     })
 }
 
