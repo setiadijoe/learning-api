@@ -11,7 +11,7 @@
 
 # Download google sdk
 echo 'Downloading google sdk...'
-curl -o /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-199.0.0-linux-x86_64.tar.gz
+curl /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-199.0.0-linux-x86_64.tar.gz
 tar -xvf /tmp/google-cloud-sdk.tar.gz -C /tmp/
 /tmp/google-cloud-sdk/install.sh -q
 source /tmp/google-cloud-sdk/path.bash.inc
@@ -38,7 +38,7 @@ IMAGE=gcr.io/$PROJECT_ID/$APP_NAME:$BITBUCKET_TAG
 
 echo "$PRODUCTION_ENV" | base64 --decode > .env # write production_env base64 decoded to .env file
 
-docker build -t $IMAGE ../Dockerfile   # build docker image
+docker build -t $IMAGE .   # build docker image
 
 echo 'Uploading docker image....'
 gcloud docker -- push $IMAGE # push image to google container registry

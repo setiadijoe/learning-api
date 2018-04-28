@@ -8,7 +8,6 @@ pipelines:
           - node
           - docker
         script:
-          - set +e
           - bash ./deploy/bitbucket-deploy.sh
         services:
           - docker
