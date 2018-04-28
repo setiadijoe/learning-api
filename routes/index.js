@@ -8,7 +8,7 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: async (request, h) => `Hello Hapi!!`,
+        handler: async (request, h) => `Taralite Faspay API!!`,
         description: 'Root API',
         auth: false,
         notes: 'return server status'
