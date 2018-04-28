@@ -2,7 +2,7 @@
 image: image: node:8.9.0
 
 pipelines:
-  tags::
+  tags:
     v*
     - step:
         name: faspay service deployment
