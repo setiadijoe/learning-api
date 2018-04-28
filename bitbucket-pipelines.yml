@@ -3,7 +3,7 @@ image: node:8.9.0
 
 pipelines:
   tags:
-    v*
+    v*:
     - step:
         name: faspay service deployment
         deployment: production
@@ -13,5 +13,5 @@ pipelines:
         script:
           - set +e
           - ./scripts/bitbucket-deploy.sh
-        service:
+        services:
           - docker
