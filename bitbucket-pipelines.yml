@@ -1,5 +1,5 @@
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: image: node:8.9.0
+image: node:8.9.0
 
 pipelines:
   tags:
