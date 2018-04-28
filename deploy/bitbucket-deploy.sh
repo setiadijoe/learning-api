@@ -26,7 +26,7 @@ echo $GCLOUD_APIKEY | base64 --decode --ignore-garbage > ./gcloud-api-key.json
 gcloud auth activate-service-account --key-file gcloud-api-key.json
 
 # Set project ID
-PROJECT_ID=$(gcloud config get-value project)
+PROJECT_ID=taralite-integration-198711
 gcloud config set project $PROJECT_ID
 
 # Authenticating kubectl to cluster
