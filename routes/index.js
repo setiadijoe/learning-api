@@ -8,7 +8,7 @@ const routes = {
       method: 'GET',
       path: '/',
       config: {
-        handler: async (request, h) => `OK!`,
+        handler: async (request, h) => `Hello Hapi!!`,
         description: 'Root API',
         auth: false,
         notes: 'return server status'
