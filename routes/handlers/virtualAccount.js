@@ -9,6 +9,7 @@ module.exports.generateVa = {
       accountSource: Joi.string().valid('LenderAccount', 'LoanAccount').required(),
       loanId: Joi.number().when('accountSource', { is: 'LoanAccount', then: Joi.required(), otherwise: Joi.invalid() }),
       lenderAccountId: Joi.number().when('accountSource', { is: 'LenderAccount', then: Joi.required(), otherwise: Joi.invalid() }),
+      email: Joi.string().email().required(),
       phoneNumber: Joi.string().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string().allow('')
