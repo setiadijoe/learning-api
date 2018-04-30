@@ -35,6 +35,8 @@ INNER JOIN
     "User" "U"
   ON
     "U".id = "BE".user_id
+  WHERE
+    "L".status = 'disbursed'
   UNION
   SELECT
     'LenderAccount' as type, "LenderA".id, NULL AS loan_id, "LenderA".user_id, "U".username as email
@@ -63,6 +65,7 @@ ON
   `,
   values: [arrayId]
 })
+// tambahin yang statusnya lagi disburse untuk pengecekkan yang gagal
 
 const getDistinctId = async () => {
   let listId = await Model.VirtualAccount.findAll({ attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('account_id')), 'account_id']] })
@@ -108,6 +111,6 @@ const migrateVa = async () => {
     .catch(err => console.log(err))
 }
 
-const job = schedule.scheduleJob('* */30 * * * *', function () { // eslint-disable-line no-unused-vars
+const job = schedule.scheduleJob('*/5 * * * * *', function () { // eslint-disable-line no-unused-vars
   migrateVa()
 })
