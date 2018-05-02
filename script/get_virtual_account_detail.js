@@ -24,6 +24,7 @@ const select_query = (account_id) => {
   return `SELECT CONCAT("BCA".first_name, ' ',
   "BCA".last_name)::VARCHAR AS "fullName",
    "BCA".account_id AS account_id,
+   "BCA".email,
 "BCA".bank_code AS bank_code_1,
 "BCA".virtual_account_id AS virtual_account_1,
 "PERMATA".bank_code AS bank_code_2, 
