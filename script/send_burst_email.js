@@ -11,7 +11,7 @@ const sendBurstEmail = () => {
     .then(vaDetails => {
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
       return vaDetails.map(va_detail => {
-        const body = fs.readFileSync('./Disbursement_Mail_Template.html', 'UTF-8')
+        const body = fs.readFileSync('./Mail_Template.html', 'UTF-8')
         const body_text = body.replace(/{{FNAME}}/g, va_detail.fullName.toUpperCase())
           .replace(/{{BANKCODE1}}/g, bank_mapper(va_detail.bank_code_1))
           .replace(/{{BANKCODE2}}/g, bank_mapper(va_detail.bank_code_2))
