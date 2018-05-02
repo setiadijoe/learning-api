@@ -15,7 +15,8 @@ describe('Virtual Account Detail', () => {
       source: 'LoanAccount',
       first_name: 'Husni',
       last_name: 'Patrick',
-      bank_code: 'BCA'
+      bank_code: 'BCA',
+      email: 'husni@bca.com'
     }))
 
     vaService.virtualAccountDetail(va).then(data => {

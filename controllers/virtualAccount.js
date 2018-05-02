@@ -3,7 +3,7 @@ const services = require('./../services/virtualAccount')
 const util = require('./../utils/virtualAccount')
 
 module.exports.generateVa = (request, h) => {
-  const { accountId, accountSource, firstName, lastName, loanId, lenderAccountId } = request.payload
+  const { accountId, accountSource, firstName, lastName, loanId, lenderAccountId, email } = request.payload
 
   const virtualAccounts = util.generateVa(accountId, accountSource)
   virtualAccounts.map(virtualAccount => {
@@ -11,6 +11,7 @@ module.exports.generateVa = (request, h) => {
     virtualAccount.last_name = lastName
     virtualAccount.loan_id = loanId
     virtualAccount.lender_account_id = lenderAccountId
+    virtualAccount.email = email
   })
 
   return services.vaDetail(accountId)
