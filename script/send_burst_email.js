@@ -4,14 +4,17 @@ const path = require('path')
 
 const ElasticMail = require('nodelastic')
 const get_account_id = require('./get_virtual_account_detail')
+const { bank_mapper } = require('./../utils/bank_mapper')
 
 const sendBurstEmail = () => {
   return get_account_id.getVirtualAccountDetail()
     .then(vaDetails => {
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
       return vaDetails.map(va_detail => {
-        const body = fs.readFileSync('./Mail_template.html', 'UTF-8')
+        const body = fs.readFileSync('./Disbursement_Mail_Template.html', 'UTF-8')
         const body_text = body.replace(/{{FNAME}}/g, va_detail.fullName.toUpperCase())
+          .replace(/{{BANKCODE1}}/g, bank_mapper(va_detail.bank_code_1))
+          .replace(/{{BANKCODE2}}/g, bank_mapper(va_detail.bank_code_2))
           .replace(/{{VACODE1}}/g, va_detail.virtual_account_1)
           .replace(/{{VACODE2}}/g, va_detail.virtual_account_2)
 
@@ -31,8 +34,7 @@ const sendBurstEmail = () => {
 }
 
 const attachments = [
-  'Tata Cara Pembayaran BCA VA.pdf',
-  'Tata Cara Pembayaran Permata VA.pdf'
+  'Tata Cara Pembayaran VA.pdf'
 ].map(attachment => {
   return {
     data: fs.readFileSync(path.resolve(`./attachments/${attachment}`)),
