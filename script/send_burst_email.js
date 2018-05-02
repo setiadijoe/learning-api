@@ -22,7 +22,7 @@ const sendBurstEmail = () => {
           from: 'customer@taralite.com',
           fromName: 'Taralite Admin',
           subject: 'Taralite: Notification For New Virtual Account',
-          msgTo: process.env.NODE_ENV === 'production' ? [ va_detail.email ] : process.env.NOTIFICATION_EMAIL,
+          msgTo: process.env.NODE_ENV === 'production' ? va_detail.email : process.env.NOTIFICATION_EMAIL,
           msgBcc: process.env.NODE_ENV === 'production' ? [ 'admin@taralite.com' ] : null,
           bodyHtml: body_text,
           textHtml: body_text
