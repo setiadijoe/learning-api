@@ -10,7 +10,9 @@ const sendBurstEmail = () => {
   return get_account_id.getVirtualAccountDetail()
     .then(vaDetails => {
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
-      return vaDetails.map(va_detail => {
+      const totalEmail = vaDetails.length
+      console.log(`total email: ${totalEmail}`)
+      return vaDetails.map((va_detail, idx) => {
         const body = fs.readFileSync('./Mail_Template.html', 'UTF-8')
         const body_text = body.replace(/{{FNAME}}/g, va_detail.fullName.toUpperCase())
           .replace(/{{BANKCODE1}}/g, bank_mapper(va_detail.bank_code_1))
@@ -18,16 +20,18 @@ const sendBurstEmail = () => {
           .replace(/{{VACODE1}}/g, va_detail.virtual_account_1)
           .replace(/{{VACODE2}}/g, va_detail.virtual_account_2)
 
-        return client.send({
-          from: 'customer@taralite.com',
-          fromName: 'Taralite Admin',
-          subject: 'Taralite: Notification For New Virtual Account',
-          msgTo: process.env.NODE_ENV === 'production' ? va_detail.email : process.env.NOTIFICATION_EMAIL,
-          bodyHtml: body_text,
-          textHtml: body_text
-        }, attachments)
-          .then(console.log)
-          .catch(console.error)
+        setTimeout(() => {
+          return client.send({
+            from: 'customer@taralite.com',
+            fromName: 'Taralite Admin',
+            subject: 'Taralite: Notification For New Virtual Account',
+            msgTo: process.env.NODE_ENV === 'production' ? va_detail.email : process.env.NOTIFICATION_EMAIL,
+            bodyHtml: body_text,
+            textHtml: body_text
+          }, attachments)
+            .then(console.log)
+            .catch(console.error)
+        }, 400 * idx)
       })
     })
 }
