@@ -9,6 +9,12 @@ const { bank_mapper } = require('./../utils/bank_mapper')
 const sendBurstEmail = () => {
   return get_account_id.getVirtualAccountDetail()
     .then(vaDetails => {
+      const email_lists = blasterEmail.map(email => {
+        return email.split(',')[0].split('"').join('')
+      })
+      return {email_lists, vaDetails}
+    })
+    .then(({email_lists, vaDetails}) => {
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
       const totalEmail = vaDetails.length
       console.log(`total email: ${totalEmail}`)
@@ -21,6 +27,10 @@ const sendBurstEmail = () => {
           .replace(/{{VACODE2}}/g, va_detail.virtual_account_2)
 
         setTimeout(() => {
+          if (va_detail.email.indexOf(email_lists) !== -1) {
+            console.log('Email that has been sent ', va_detail.email)
+            return false
+          }
           return client.send({
             from: 'customer@taralite.com',
             fromName: 'Taralite Admin',
@@ -36,6 +46,7 @@ const sendBurstEmail = () => {
     })
 }
 
+const blasterEmail = fs.readFileSync('./LogsEmailBlast.csv', 'utf-8').split('\n').slice(1)
 const attachments = [
   'Tata Cara Pembayaran VA.pdf'
 ].map(attachment => {
