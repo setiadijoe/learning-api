@@ -27,7 +27,7 @@ const sendBurstEmail = () => {
           .replace(/{{VACODE2}}/g, va_detail.virtual_account_2)
 
         setTimeout(() => {
-          if (va_detail.email.indexOf(email_lists) !== -1) {
+          if (email_lists.indexOf(va_detail.email) !== -1) {
             console.log('Email that has been sent ', va_detail.email)
             return false
           }
