@@ -31,6 +31,9 @@ const sendBurstEmail = () => {
             console.log('Email that has been sent ', va_detail.email)
             return false
           }
+          console.log(`=========DATA WILL BE SENT NO. ${idx + 1}============`)
+          console.log(va_detail)
+          console.log('========================================')
           return client.send({
             from: 'customer@taralite.com',
             fromName: 'Taralite Admin',
