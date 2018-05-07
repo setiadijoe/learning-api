@@ -11,7 +11,7 @@ module.exports = function (sequelize, DataTypes) {
     transaction_date: DataTypes.DATE
   })
   FaspayPayment.associate = function (models) {
-    models.FaspayPayment.hasOne(models.PaymentTransaction, {
+    models.FaspayPayment.hasMany(models.PaymentTransaction, {
       foreignKey: 'faspay_payment_id'
     })
   }
