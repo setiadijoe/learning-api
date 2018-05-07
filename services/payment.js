@@ -14,16 +14,19 @@ async function updatePayment (trx_id, updateObject) {
     where: {
       transaction_id: trx_id
     },
-    include: [{model: Model.PaymentTransaction}]
+    include: [Model.PaymentTransaction]
   }).then(payment => {
     if (!payment) return Promise.reject(new Error('Transaction Id Not Found!'))
-    const array_of_status = payment.PaymentTransactions.map(payment => {
-      return payment.status === 'success'
-    })
-    var status
 
-    array_of_status.indexOf(true) === -1 ? status = 'failed' : status = 'success'
-    if (payment.status_code === '2' && status === 'success') return Promise.reject(new Error('Cannot update payment with status success'))
+    // cannot update payment if:
+    // payment status = 'success' and payment transaction to "admin-service" is successfully
+    const successTransaction = payment.PaymentTransactions.find((transaction) => {
+      return transaction.status === 'success'
+    })
+    if (payment.status_code === '2' && successTransaction) {
+      return Promise.reject(new Error('Cannot update payment with status success'))
+    }
+
     return payment.updateAttributes(updateObject)
   })
 }
