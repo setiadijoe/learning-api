@@ -27,7 +27,6 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "prod": "NODE_ENV=production pm2 start --no-daemon process.json",
     "lint": "./node_modules/.bin/eslint .",
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "seed": "./node_modules/.bin/sequelize db:seed:all",
