@@ -1,0 +1,13 @@
+pipelines:
+  tags:
+    v*:
+    - step:
+        name: faspay service deployment
+        deployment: production
+        caches:
+          - node
+          - docker
+        script:
+          - bash ./deploy/bitbucket-deploy.sh
+        services:
+          - docker
