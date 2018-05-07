@@ -18,14 +18,11 @@ async function updatePayment (trx_id, updateObject) {
   }).then(payment => {
     if (!payment) return Promise.reject(new Error('Transaction Id Not Found!'))
     const array_of_status = payment.PaymentTransactions.map(payment => {
-      console.log(payment.status)
       return payment.status === 'success'
     })
     var status
-    console.log(array_of_status)
-    console.log(array_of_status.indexOf(true))
+
     array_of_status.indexOf(true) === -1 ? status = 'failed' : status = 'success'
-    console.log(status)
     if (payment.status_code === '2' && status === 'success') return Promise.reject(new Error('Cannot update payment with status success'))
     return payment.updateAttributes(updateObject)
   })
