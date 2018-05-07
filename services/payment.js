@@ -13,10 +13,20 @@ async function updatePayment (trx_id, updateObject) {
   return Model.FaspayPayment.findOne({
     where: {
       transaction_id: trx_id
-    }
+    },
+    include: [Model.PaymentTransaction]
   }).then(payment => {
     if (!payment) return Promise.reject(new Error('Transaction Id Not Found!'))
-    if (payment.status_code === '2') return Promise.reject(new Error('Cannot update payment with status_code = 2!!'))
+
+    // cannot update payment if:
+    // payment status = 'success' and payment transaction to "admin-service" is successfully
+    const successTransaction = payment.PaymentTransactions.find((transaction) => {
+      return transaction.status === 'success'
+    })
+    if (payment.status_code === '2' && successTransaction) {
+      return Promise.reject(new Error('Cannot update payment with status success'))
+    }
+
     return payment.updateAttributes(updateObject)
   })
 }
