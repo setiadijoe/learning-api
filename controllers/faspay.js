@@ -68,7 +68,7 @@ module.exports.paymentNotif = async (r, h) => {
   }
 
   try {
-    console.log(`updating payment trx_id = ${trx_id} with status = ${status_desc}`)
+    console.log(`updating payment trx_id = ${trx_id} with status code = ${payment_status_code}`)
     const payment = await updatePayment(trx_id, {
       merchant_id,
       bill_no,
