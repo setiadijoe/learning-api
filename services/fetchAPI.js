@@ -1,5 +1,4 @@
 require('dotenv').config()
-const moment = require('moment-timezone')
 const axios = require('axios')
 
 async function requestToken () {
@@ -30,7 +29,6 @@ async function paymentToAdminService (vaDetail, payload) {
     url = `${process.env.URL}/account/lender/${vaDetail.lender_account_id}/topup`
   } else {
     payload.notes = `repayment via VA bank ${vaDetail.bank_code}`
-    payload.payment_date = moment().tz('Asia/Jakarta')
     url = `${process.env.URL}/loan/${vaDetail.loan_id}/repayment`
   }
   return axios({
