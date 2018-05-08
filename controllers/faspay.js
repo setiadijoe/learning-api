@@ -75,16 +75,17 @@ module.exports.paymentNotif = async (r, h) => {
       amount,
       status_code: payment_status_code,
       status_desc: payment_status_desc,
-      transaction_date: moment(payment_date).tz('Asia/Jakarta') // faspay payment date is in UTC+7 timezone while admin service is using UTC
+      transaction_date: moment(payment_date).utcOffset(+'-7').format('YYYY-MM-DD HH:mm:ss') // faspay payment date is in UTC+7 timezone while admin service is using UTC
     })
 
     if (payment.status_code === '2') { // Check Faspay Documentation
       const vaDetail = await vaService.virtualAccountDetail(payment.virtual_account)
       const payload = {
         amount: payment.amount,
-        payment_date: moment(payment_date).tz('Asia/Jakarta') // faspay payment date is in UTC+7 timezone while admin service is using UTC
+        payment_date: moment(payment_date).utcOffset(+'-7').format('YYYY-MM-DD HH:mm:ss').toString()
       }
-
+      console.log('payment dari FASPAY : ', payment_date)
+      console.log('UTC TIME            : ', payload.payment_date)
       let status = 'failed'
       try {
         console.log('sending payment to admin service')
@@ -100,7 +101,7 @@ module.exports.paymentNotif = async (r, h) => {
         amount: payment.amount,
         status,
         bank_name: vaDetail.bank_code.toUpperCase(),
-        date: moment(payment_date).tz('Asia/Jakarta')
+        date: moment().tz('Asia/Jakarta')
       }
 
       // status === 'success' && sendEmailUsingVirtualAccount(payment)
