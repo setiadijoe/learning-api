@@ -62,7 +62,7 @@ module.exports.paymentNotif = async (r, h) => {
     merchant_id,
     bill_no,
     amount,
-    status_code: FASPAY_RESPONSE_CODE.Sukses,
+    response_code: FASPAY_RESPONSE_CODE.Sukses,
     status_desc: 'Sukses',
     transaction_date: moment().tz('Asia/Jakarta')
   }
@@ -75,15 +75,17 @@ module.exports.paymentNotif = async (r, h) => {
       amount,
       status_code: payment_status_code,
       status_desc: payment_status_desc,
-      transaction_date: moment(payment_date).tz('Asia/Jakarta') // faspay payment date is in UTC+7 timezone while admin service is using UTC
+      transaction_date: moment(payment_date).utcOffset(+'-7').format('YYYY-MM-DD HH:mm:ss') // faspay payment date is in UTC+7 timezone while admin service is using UTC
     })
 
     if (payment.status_code === '2') { // Check Faspay Documentation
       const vaDetail = await vaService.virtualAccountDetail(payment.virtual_account)
       const payload = {
-        amount: payment.amount
+        amount: payment.amount,
+        payment_date: moment(payment_date).utcOffset(+'-7').format('YYYY-MM-DD HH:mm:ss').toString()
       }
-
+      console.log('payment dari FASPAY : ', payment_date)
+      console.log('UTC TIME            : ', payload.payment_date)
       let status = 'failed'
       try {
         console.log('sending payment to admin service')
@@ -102,7 +104,6 @@ module.exports.paymentNotif = async (r, h) => {
         date: moment().tz('Asia/Jakarta')
       }
 
-      // TODO: use email template, ask Jati
       // status === 'success' && sendEmailUsingVirtualAccount(payment)
       if (vaDetail.loan_id) {
         notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
@@ -115,7 +116,7 @@ module.exports.paymentNotif = async (r, h) => {
     console.error(e)
     return Object.assign(responseObject, {
       response_code: FASPAY_RESPONSE_CODE.Gagal,
-      response_desc: 'Gagal'
+      status_desc: 'Gagal'
     })
   }
 }
