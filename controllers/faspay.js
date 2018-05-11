@@ -62,7 +62,7 @@ module.exports.paymentNotif = async (r, h) => {
     merchant_id,
     bill_no,
     amount,
-    status_code: FASPAY_RESPONSE_CODE.Sukses,
+    response_code: FASPAY_RESPONSE_CODE.Sukses,
     status_desc: 'Sukses',
     transaction_date: moment().tz('Asia/Jakarta')
   }
@@ -116,7 +116,7 @@ module.exports.paymentNotif = async (r, h) => {
     console.error(e)
     return Object.assign(responseObject, {
       response_code: FASPAY_RESPONSE_CODE.Gagal,
-      response_desc: 'Gagal'
+      status_desc: 'Gagal'
     })
   }
 }
