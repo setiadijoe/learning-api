@@ -95,7 +95,18 @@ pm2 start app,js
 - Check your running api, type `pm2 list` and see your running api. It should **online**
 - To check the log, type `pm2 logs <id>`
 
-Then you check your api in postman or 
+Then you check your api in postman
+
+##DEPLOY ON YOUR LOCAL SERVER
+
+- first you must have admin service project on your local and running well
+- git clone this repository into your local workdir
+- go into the directory and run `npm i` or `yarn`
+- copy `env_template` and rename into `.env` then edit as you need
+- run `npm run start`
+- for query type `inquiry` and `payment`, use signature from `virtual-account-id`
+- for post notify, use signature from `bill_no` and `payment_status_code`
+
 
 ##DOCUMENTATION FASPAY
 ![Faspay Documentation](https://faspay.co.id/docs/#request-parameter-inquiry-payment-notification)
