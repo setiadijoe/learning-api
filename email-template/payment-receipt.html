@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -111,15 +112,15 @@
           </div>
           <div class="salutation" style="width: 100%; margin: auto; margin-bottom: 18px;">
             <span style="color: #082218; margin-top: 29px; font-weight: 300; font-family: Roboto,sans-serif;">Hai,</span>
-            <span style="color: #2bab7b; margin-top: 29px; font-weight: 300; font-family: Roboto,sans-serif;">Jati Sukmana</span>
+            <span style="color: #2bab7b; margin-top: 29px; font-weight: 300; font-family: Roboto,sans-serif;">{{fullName}}</span>
           </div>
           <div class="content-description" style="width: 100%; margin: auto; color: #757575;">
-            <p>Terima kasih telah membayar cicilan Dana Tara-mu ke nomor virtual account <b>Bank BCA</b> di <b>1031508794743815</b> pada <b>Selasa, 10 April 2018</b> pukul <b>04:20:00 WIB</b> sebesar</p>
+            <p>Terima kasih telah membayar cicilan Dana Tara-mu ke nomor virtual account <b>{{bankName}}</b> di <b>{{virtualAccountId}}</b> pada <b>{{day}}, {{date}}</b> pukul <b>{{time}} WIB</b> sebesar</p>
           </div>
           <hr style="width: 100%; border: 2px dashed #eeeeee; border-style: none none dashed; color: #fff; margin: 24px 0px 28px 0px">
           <div class="content-wrapper" style="width: 100%; margin: 0px auto; overflow: hidden; text-align: center;">
             <div class="content-amount" style="height: 25px; font-family: Roboto,sans-serif; font-size: 20px; font-weight: 500; letter-spacing: 0.5px; text-align: center; color: #2bab7b;">
-              Rp 8.828.750
+              Rp {{amount}}
             </div>
           </div>
           <hr style="width: 100%; border: 2px dashed #eeeeee; border-style: none none dashed; color: #fff; margin: 26px 0px 21px 0px">
