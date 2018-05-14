@@ -55,4 +55,4 @@ NOTIFICATION_EMAIL=<email for local testing>
 
 #LOGIN FOR AUTH FASPAY
 USERNAME_AUTH=<username>
-PASSWORD_AUTH=<password with bcrypt>
+PASSWORD_AUTH=<password with bcrypt hashing>
