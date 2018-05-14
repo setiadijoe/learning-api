@@ -2,49 +2,69 @@ require('dotenv').config()
 
 const ElasticMail = require('nodelastic')
 const services = require('../services/virtualAccount')
+const moment = require('moment')
+const Model = require('../models')
+const nunjucks = require('nunjucks')
+const money = require('./../utils/money').money
+nunjucks.configure('./email-template/', { autoescape: false })
 
-module.exports.sendEmailUsingVirtualAccount = (payment) => {
-  return services.virtualAccountDetail(payment.virtual_account)
-    .then(vaDetail => {
+module.exports.getNotificationDetails = (transaction_id) => {
+  return Model.FaspayPayment.find({ where: { transaction_id } })
+    .then(payment => {
+      return services.virtualAccountDetail(payment.virtual_account)
+        .then(vaDetail => {
+          const { amount, transaction_date } = payment
+          const { email, fullName } = vaDetail
+          return {
+            amount, email, fullName, transaction_date
+          }
+        })
+    })
+}
+
+module.exports.generateNotificationEmail = ({ fullName, amount, transaction_date }) => {
+  const day = moment(transaction_date).locale('id').format('dddd')
+  const date = moment(transaction_date).locale('id').format('DD MMMM YYYY')
+  const time = moment(transaction_date).locale('id').format('hh:mm:ss')
+  const formattedAmount = money(amount)
+  return nunjucks.render('payment-receipt.html', { fullName, amount: formattedAmount, day, date, time })
+}
+
+module.exports.notifyPaymentReceived = (payment_transaction_id) => {
+  return this.getNotificationDetails(payment_transaction_id)
+    .then(details => {
+      const html = this.generateNotificationEmail(details)
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
-      const body = email_text
-        .replace(/{{fullName}}/g, vaDetail.fullName)
-        .replace(/{{transactionId}}/g, payment.transaction_id)
-        .replace(/{{virtualAccountId}}/g, vaDetail.virtual_account_id)
-        .replace(/{{transactionDate}}/g, payment.transaction_date)
-        .replace(/{{billNo}}/g, payment.bill_no)
-        .replace(/{{amount}}/g, payment.amount)
-        .replace(/{{statusdesc}}/g, payment.status_desc)
+      if (process.env.NODE_ENV !== 'production') console.log(`Sending to ${process.env.NOTIFICATION_EMAIL} instead of ${details.email}`)
 
       return client.send({
         from: 'customer@taralite.com',
         fromName: 'Taralite Admin',
         subject: 'Taralite: Notifikasi Pembayaran Invoice',
-        msgTo: process.env.NODE_ENV === 'production' ? [ vaDetail.email ] : [ process.env.NOTIFICATION_EMAIL ],
+        msgTo: process.env.NODE_ENV === 'production' ? [ details.email ] : [ process.env.NOTIFICATION_EMAIL ],
         msgBcc: process.env.NODE_ENV === 'production' ? [ 'admin@taralite.com' ] : null,
-        bodyHtml: body.replace(/\n/g, '<br>'),
-        textHtml: body
+        bodyHtml: html
       })
     })
 }
 
-const email_text = `Kepada {{fullName}},
+// const email_text = `Kepada {{fullName}},
 
-Transaksi anda dengan nomor
-Virtual Account = {{virtualAccountId}}
-pada tanggal {{transactionDate}} telah berhasil
-Berikut detail pinjaman yang sudah terbayarkan
+// Transaksi anda dengan nomor
+// Virtual Account = {{virtualAccountId}}
+// pada tanggal {{transactionDate}} telah berhasil
+// Berikut detail pinjaman yang sudah terbayarkan
 
-- No Transaksi: {{transactionId}}
-- No Billing: {{billNo}}
-- Total Pembayaran: {{amount}}
-- Status Pembayaran: {{statusdesc}}
-- Tanggal Transaksi: {{transactionDate}}
+// - No Transaksi: {{transactionId}}
+// - No Billing: {{billNo}}
+// - Total Pembayaran: {{amount}}
+// - Status Pembayaran: {{statusdesc}}
+// - Tanggal Transaksi: {{transactionDate}}
 
-Demikianlah informasi yang kami berikan. Jika ada yang kurang jelas harap segera hubungi kami
+// Demikianlah informasi yang kami berikan. Jika ada yang kurang jelas harap segera hubungi kami
 
-Terima kasih
+// Terima kasih
 
-Phone  : 0811-8181-020
-Office : 021-292-00-955
-Email  : customer@taralite.com`
+// Phone  : 0811-8181-020
+// Office : 021-292-00-955
+// Email  : customer@taralite.com`
