@@ -7,7 +7,7 @@ const paymentService = require('./../services/payment')
 const { paymentToAdminService } = require('../services/fetchAPI')
 const inquiry = require('../services/inquiry')
 const { notifyToSlack } = require('../services/notification')
-const { notifyPaymentReceived } = require('./sendEmail')
+const { notifyPaymentReceived } = require('./../services/email')
 
 module.exports.inquiry = async (request, h) => {
   let response = {

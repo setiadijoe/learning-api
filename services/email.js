@@ -1,12 +1,12 @@
 require('dotenv').config()
 
 const ElasticMail = require('nodelastic')
-const services = require('../services/virtualAccount')
+const services = require('./virtualAccount')
 const moment = require('moment')
 const Model = require('../models')
 const nunjucks = require('nunjucks')
-const money = require('./../utils/money').money
-const bank_mapper = require('./../utils/bank_mapper').bank_mapper
+const { money } = require('./../utils/money')
+const { bank_mapper } = require('./../utils/bank_mapper')
 nunjucks.configure('./email-template/', { autoescape: false })
 
 module.exports.getNotificationDetails = (transaction_id) => {
@@ -27,10 +27,17 @@ module.exports.generateNotificationEmail = ({ fullName, virtual_account_id, bank
   const day = moment(transaction_date).locale('id').format('dddd')
   const date = moment(transaction_date).locale('id').format('DD MMMM YYYY')
   const time = moment(transaction_date).locale('id').format('hh:mm:ss')
-  const formattedAmount = money(amount)
-  const bankName = bank_mapper(bank_code)
-  const virtualAccountId = virtual_account_id
-  return nunjucks.render('payment-receipt.html', { fullName, virtualAccountId, bankName, amount: formattedAmount, day, date, time })
+  const details = {
+    fullName,
+    virtualAccountId: virtual_account_id,
+    bankName: bank_mapper(bank_code),
+    amount: money(amount),
+    day,
+    date,
+    time
+  }
+  console.log(details)
+  return nunjucks.render('payment-receipt.html', details)
 }
 
 module.exports.notifyPaymentReceived = (payment_transaction_id) => {
@@ -50,24 +57,3 @@ module.exports.notifyPaymentReceived = (payment_transaction_id) => {
       })
     })
 }
-
-// const email_text = `Kepada {{fullName}},
-
-// Transaksi anda dengan nomor
-// Virtual Account = {{virtualAccountId}}
-// pada tanggal {{transactionDate}} telah berhasil
-// Berikut detail pinjaman yang sudah terbayarkan
-
-// - No Transaksi: {{transactionId}}
-// - No Billing: {{billNo}}
-// - Total Pembayaran: {{amount}}
-// - Status Pembayaran: {{statusdesc}}
-// - Tanggal Transaksi: {{transactionDate}}
-
-// Demikianlah informasi yang kami berikan. Jika ada yang kurang jelas harap segera hubungi kami
-
-// Terima kasih
-
-// Phone  : 0811-8181-020
-// Office : 021-292-00-955
-// Email  : customer@taralite.com`
