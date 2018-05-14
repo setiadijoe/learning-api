@@ -7,6 +7,7 @@ const paymentService = require('./../services/payment')
 const { paymentToAdminService } = require('../services/fetchAPI')
 const inquiry = require('../services/inquiry')
 const { notifyToSlack } = require('../services/notification')
+const { notifyPaymentReceived } = require('./sendEmail')
 
 module.exports.inquiry = async (request, h) => {
   let response = {
@@ -102,8 +103,7 @@ module.exports.paymentNotif = async (r, h) => {
         date: moment().tz('Asia/Jakarta')
       }
 
-      // TODO: use email template, ask Jati
-      // status === 'success' && sendEmailUsingVirtualAccount(payment)
+      status === 'success' && notifyPaymentReceived(payment)
       if (vaDetail.loan_id) {
         notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
       } else if (vaDetail.lender_account_id) {
