@@ -6,6 +6,7 @@ const moment = require('moment')
 const Model = require('../models')
 const nunjucks = require('nunjucks')
 const money = require('./../utils/money').money
+const bank_mapper = require('./../utils/bank_mapper').bank_mapper
 nunjucks.configure('./email-template/', { autoescape: false })
 
 module.exports.getNotificationDetails = (transaction_id) => {
@@ -14,20 +15,22 @@ module.exports.getNotificationDetails = (transaction_id) => {
       return services.virtualAccountDetail(payment.virtual_account)
         .then(vaDetail => {
           const { amount, transaction_date } = payment
-          const { email, fullName } = vaDetail
+          const { email, fullName, bank_code, virtual_account_id } = vaDetail
           return {
-            amount, email, fullName, transaction_date
+            amount, email, bank_code, fullName, virtual_account_id, transaction_date
           }
         })
     })
 }
 
-module.exports.generateNotificationEmail = ({ fullName, amount, transaction_date }) => {
+module.exports.generateNotificationEmail = ({ fullName, virtual_account_id, bank_code, amount, transaction_date }) => {
   const day = moment(transaction_date).locale('id').format('dddd')
   const date = moment(transaction_date).locale('id').format('DD MMMM YYYY')
   const time = moment(transaction_date).locale('id').format('hh:mm:ss')
   const formattedAmount = money(amount)
-  return nunjucks.render('payment-receipt.html', { fullName, amount: formattedAmount, day, date, time })
+  const bankName = bank_mapper(bank_code)
+  const virtualAccountId = virtual_account_id
+  return nunjucks.render('payment-receipt.html', { fullName, virtualAccountId, bankName, amount: formattedAmount, day, date, time })
 }
 
 module.exports.notifyPaymentReceived = (payment_transaction_id) => {
