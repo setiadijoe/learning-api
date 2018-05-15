@@ -105,7 +105,7 @@ module.exports.paymentNotif = async (r, h) => {
         date: moment().tz('Asia/Jakarta')
       }
 
-      status === 'success' && notifyPaymentReceived(payment)
+      status === 'success' && notifyPaymentReceived(payment.transaction_id)
       if (vaDetail.loan_id) {
         notifyToSlack(Object.assign(slackPayload, { loan_id: vaDetail.loan_id }), '#faspay-repayment')
       } else if (vaDetail.lender_account_id) {

@@ -26,7 +26,7 @@ module.exports.getNotificationDetails = (transaction_id) => {
 module.exports.generateNotificationEmail = ({ fullName, virtual_account_id, bank_code, amount, transaction_date }) => {
   const day = moment(transaction_date).locale('id').format('dddd')
   const date = moment(transaction_date).locale('id').format('DD MMMM YYYY')
-  const time = moment(transaction_date).locale('id').format('hh:mm:ss')
+  const time = moment(transaction_date).locale('id').tz('Asia/Jakarta').format('HH:mm:ss')
   const details = {
     fullName,
     virtualAccountId: virtual_account_id,
@@ -46,7 +46,7 @@ module.exports.notifyPaymentReceived = (payment_transaction_id) => {
       const html = this.generateNotificationEmail(details)
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
       if (process.env.NODE_ENV !== 'production') console.log(`Sending to ${process.env.NOTIFICATION_EMAIL} instead of ${details.email}`)
-
+      console.log(`Sending payment receipt email to ${details.email}`)
       return client.send({
         from: 'customer@taralite.com',
         fromName: 'Taralite Admin',
