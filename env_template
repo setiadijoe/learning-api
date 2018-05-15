@@ -1,32 +1,58 @@
-#DEVELOPMENT
-DB_DEV_HOST=<YOUR HOST NAME>
-DB_DEV_PORT=<YOUR OPEN PORT>
-DB_DEV_USER=<YOUR USER NAME>
-DB_DEV_PASS=<YOUR PASSWORD>
-DB_DEV=<YOUR DATABASE NAME>
-DB_DEV_DIALECT=<YOUR DIALECT>
+NODE_ENV=<using your development mode on local>
+NODE_PORT=<using port for faspay service local>
+
+#DEVELOPMENT ON LOCAL
+DB_DEV_HOST=<change with your local host>
+DB_DEV_PORT=<change with your local port>
+DB_DEV_USER=<change with your local username>
+DB_DEV_PASS=<change with your local password>
+DB_DEV=<change with your local database name>
+DB_DEV_DIALECT=<change with your local database dialect>
+
+#TEST
+#THIS IS FOR TESTING ON LOCAL
+DB_TEST_HOST=<change with your local host>
+DB_TEST_PORT=<change with your local port>
+DB_TEST_USER=<change with your local username>
+DB_TEST_PASS=<change with your local password>
+DB_TEST=<change with your local database name>
+DB_TEST_DIALECT=<change with your local database dialect>
 
 #ADMINSERVICE
-DB_ADMINSER_USER=<YOUR USER NAME>
-DB_ADMINSER_PASS=<YOUR PASSWORD>
-DB_ADMINSER=<YOUR DATABASE NAME>
-DB_ADMINSER_HOST=<YOUR HOST URI>
-DB_ADMINSER_PORT=<YOUR PORT>
-DB_ADMINSER_DIALECT=<YOUR DIALECT>
+#make sure you have admin service on your local procject
+DB_ADMINSER_USER=<change with your local username>
+DB_ADMINSER_PASS=<change with your local password>
+DB_ADMINSER=<change with your local database name>
+DB_ADMINSER_HOST=<change with your local host>
+DB_ADMINSER_PORT=<change with your local port>
+DB_ADMINSER_DIALECT=<change with your local database dialect>
 
 #FASPAY_LOGIN
-FASPAY_USERID=<YOUR USERID>
-FASPAY_PASSWORD=<YOUR PASSWORD>
+#userid and password for access faspay
+FASPAY_USERID=<faspay userid>
+FASPAY_PASSWORD=<faspay password>
 
 #PREFIX
-PREFIX_BCA=<BCA>
-PREFIX_PERMATA=<PERMATA>
+PREFIX_BCA=<prefix bca>
+PREFIX_PERMATA=<prefix permata>
 
 #KEY_TOKEN
-PUBLIC_KEY=<YOUR PUBLIC KEY>
-PRIVATE_KEY=<YOUR SECRET KEY>
-URL=<YOUR URL API>
+#token for access to local admin service
+PUBLIC_KEY=<public key to access admin service>
+PRIVATE_KEY=<private key to acess admin service>
+URL=<local host of your local admin service>
+
+#MERCHANT
+MERCHANT_ID=<merchant id for faspay service config>
+MERCHANT_NAME=<merchant name for faspay service config>
+
+#URL FOR SLACK BOT
+#this is for access slack api
+SLACK_URL=<slack api url>
+#this
+ELASTIC_API_KEY=<elastic key for elastic email>
+NOTIFICATION_EMAIL=<email for local testing>
 
 #LOGIN FOR AUTH FASPAY
-USERNAME=<YOUR USERNAME>
-PASSWORD=<PASSWORD THAT HAS BEEN HASHING>
+USERNAME_AUTH=<username>
+PASSWORD_AUTH=<password with bcrypt hashing>
