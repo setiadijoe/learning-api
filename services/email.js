@@ -46,7 +46,7 @@ module.exports.notifyPaymentReceived = (payment_transaction_id) => {
       const html = this.generateNotificationEmail(details)
       const client = new ElasticMail(process.env.ELASTIC_API_KEY)
       if (process.env.NODE_ENV !== 'production') console.log(`Sending to ${process.env.NOTIFICATION_EMAIL} instead of ${details.email}`)
-
+      console.log(`Sending payment receipt email to ${details.email}`)
       return client.send({
         from: 'customer@taralite.com',
         fromName: 'Taralite Admin',
